@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>橘子小镇论坛</title>
-
 <style>
 body{
     margin:0;
@@ -13,8 +12,6 @@ body{
     background-repeat:repeat;
     background-size:120px;
 }
-
-/* 模拟手机壳 */
 .phone{
     max-width:420px;
     margin:20px auto;
@@ -23,8 +20,6 @@ body{
     box-shadow:0 8px 30px rgba(0,0,0,0.08);
     overflow:hidden;
 }
-
-/* 顶部 */
 .topbar{
     background:#c58f5c;
     color:white;
@@ -33,7 +28,6 @@ body{
     text-align:center;
     position:relative;
 }
-
 .back-home{
     position:absolute;
     left:12px;
@@ -41,7 +35,6 @@ body{
     font-size:13px;
     opacity:0.9;
 }
-
 .thread-title{
     padding:14px;
     font-size:15px;
@@ -49,94 +42,74 @@ body{
     background:#f6efe5;
     border-bottom:1px solid #eee3d4;
 }
-
 .meta{
     padding:8px 14px;
     font-size:12px;
     color:#8c7c6d;
     border-bottom:1px solid #f0e6d8;
 }
-
 .toolbar{
     padding:8px 14px;
     font-size:12px;
     background:#faf6ef;
     border-bottom:1px solid #f0e6d8;
 }
-
 .toolbar span{
     margin-right:12px;
     color:#a05d2c;
     cursor:pointer;
 }
-
-/* 楼层 */
 .post{
     padding:12px 14px;
     border-bottom:1px solid #f3eadf;
 }
-
 .username{
     font-size:15px;
     font-weight:bold;
     margin-bottom:4px;
 }
-
-.hidden-name{
-    visibility:hidden;
-    height:16px;
-}
-
 .meta-user{
     font-size:13px;
     color:#9c8b7d;
     margin-bottom:6px;
 }
-
 .floor{
     font-size:13px;
     color:#8c7c6d;
     margin-bottom:4px;
 }
-
 .content{
     font-size:16px;
     line-height:1.6;
     white-space:normal;
     margin:3px 0 5px 0;
 }
-
 .deleted{
     color:#b3a79b;
     font-style:italic;
 }
-
 .actions{
     margin-top:4px;
     font-size:12px;
     display:flex;
     justify-content:space-between;
 }
-
 .actions span{
     margin-right:10px;
     color:#a05d2c;
     cursor:pointer;
 }
-
 .pagebar{
     padding:10px 14px;
     text-align:center;
     font-size:12px;
     background:#faf6ef;
 }
-
 .pagebar span{
     margin:0 6px;
     cursor:pointer;
     color:#a05d2c;
 }
-
 .quote-box{
     padding:10px 14px;
     background:#fff3df;
@@ -145,18 +118,15 @@ body{
 }
 </style>
 </head>
-
 <body>
-
 <div class="phone">
-
 <div class="topbar">
     <span class="back-home" onclick="goHome()">← 论坛主页</span>
     橘子小镇论坛
 </div>
 
 <div class="thread-title">
-「求助」我的狗总是对邻居的狗进行骑跨行为，对方主人每次都吓得尖叫，我该怎么道歉？
+「求助」我的狗总是对邻居的狗进行骑跨行为……
 </div>
 
 <div class="meta">
@@ -171,15 +141,14 @@ body{
 <div id="posts"></div>
 <div class="pagebar" id="pagebar"></div>
 <div id="quoteArea"></div>
-
 </div>
 
 <script>
-let currentPage = 1;
-let onlyOP = false;
-const OP_NAME = "我家狗狗可爱";
-
-let postsData = []; // 当前页数据
+let currentPage=1;
+let onlyOP=false;
+const OP_NAME="我家狗狗可爱";
+let postsData=[];
+const pageCount = 3; // JS 文件数量
 
 function getLevel(points){
     if(points>2000) return "资深居民";
@@ -192,20 +161,18 @@ function randomIP(){
     return "IP: 192.168."+Math.floor(Math.random()*255)+"."+Math.floor(Math.random()*255);
 }
 
-/* 加载分页文件，不截断数组 */
+/* 加载每页 JS 文件 */
 function loadPage(page){
     currentPage = page;
-
     const old = document.getElementById("pageScript");
     if(old) old.remove();
-
     const script = document.createElement("script");
     script.src = "page"+page+".js?"+Date.now();
     script.id = "pageScript";
     document.body.appendChild(script);
 }
 
-/* 渲染整个 postsData */
+/* 渲染数据，楼层连续 */
 function render(data){
     postsData = data;
     const container = document.getElementById("posts");
@@ -216,26 +183,15 @@ function render(data){
     filtered.forEach((p,i)=>{
         const floorNumber = i + 1;
         const isOP = p.name === OP_NAME;
-
-        const nameHTML = `<div class="username">${p.name || '匿名'}${isOP?'（楼主）':''}</div>`;
-
+        const nameHTML = `<div class="username">${p.name||'匿名'}${isOP?'（楼主）':''}</div>`;
         const post = document.createElement("div");
         post.className = "post";
         post.innerHTML = `
             ${nameHTML}
-            <div class="meta-user">
-                积分 ${p.points||0} ｜ ${getLevel(p.points||0)} ｜ ${randomIP()}
-            </div>
-            <div class="floor">
-                ${floorNumber}楼 ｜ 发表于 ${p.time}
-            </div>
-            <div class="content ${p.deleted?'deleted':''}">
-                ${p.deleted?'该帖已被删除':p.content.replace(/\n/g,'<br>')}
-            </div>
-            <div class="actions">
-                ${!p.deleted?`<span onclick="quotePost(${floorNumber})">引用</span>
-                <span style="color:#b5a79a;">举报</span>`:''}
-            </div>
+            <div class="meta-user">积分 ${p.points||0} ｜ ${getLevel(p.points||0)} ｜ ${randomIP()}</div>
+            <div class="floor">${floorNumber}楼 ｜ 发表于 ${p.time}</div>
+            <div class="content ${p.deleted?'deleted':''}">${p.deleted?'该帖已被删除':p.content.replace(/\n/g,'<br>')}</div>
+            <div class="actions">${!p.deleted?`<span onclick="quotePost(${floorNumber})">引用</span><span style="color:#b5a79a;">举报</span>`:''}</div>
         `;
         container.appendChild(post);
     });
@@ -243,31 +199,28 @@ function render(data){
     renderPages();
 }
 
-/* 分页条渲染，只切换 JS 文件 */
+/* 分页条 */
 function renderPages(){
     const bar = document.getElementById("pagebar");
     bar.innerHTML = "";
-    const totalPages = 3; // JS 文件数量
-    for(let i=1;i<=totalPages;i++){
+    for(let i=1;i<=pageCount;i++){
         const span = document.createElement("span");
         span.innerText = i;
         if(i===currentPage) span.style.fontWeight="bold";
-        span.onclick = ()=> loadPage(i);
+        span.onclick = ()=>loadPage(i);
         bar.appendChild(span);
     }
 }
 
 function goHome(){ window.location.href="home.html"; }
 function toggleOP(val=true){ onlyOP=val; render(postsData); }
-function quotePost(floor){
-    const area = document.getElementById("quoteArea");
+function quotePost(floor){ 
+    const area=document.getElementById("quoteArea");
     area.innerHTML = `<div class="quote-box">引用 ${floor}楼：<br>（内容略）</div>`;
 }
 
 /* 初始加载第一页 */
 loadPage(1);
 </script>
-
-
 </body>
 </html>
