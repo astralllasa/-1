@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>橘子小镇论坛</title>
 <style>
-body{
+body {
     margin:0;
     font-family:-apple-system,BlinkMacSystemFont,Tahoma,Arial;
     background-image:url("orange.png");
     background-repeat:repeat;
     background-size:120px;
 }
-.phone{
+.phone {
     max-width:420px;
     margin:20px auto;
     background:#fffdf8;
@@ -20,7 +20,7 @@ body{
     box-shadow:0 8px 30px rgba(0,0,0,0.08);
     overflow:hidden;
 }
-.topbar{
+.topbar {
     background:#c58f5c;
     color:white;
     padding:12px;
@@ -28,91 +28,93 @@ body{
     text-align:center;
     position:relative;
 }
-.back-home{
+.back-home {
     position:absolute;
     left:12px;
     cursor:pointer;
     font-size:13px;
     opacity:0.9;
 }
-.thread-title{
+.thread-title {
     padding:14px;
     font-size:15px;
     font-weight:bold;
     background:#f6efe5;
     border-bottom:1px solid #eee3d4;
 }
-.meta{
+.meta {
     padding:8px 14px;
     font-size:12px;
     color:#8c7c6d;
     border-bottom:1px solid #f0e6d8;
 }
-.toolbar{
+.toolbar {
     padding:8px 14px;
     font-size:12px;
     background:#faf6ef;
     border-bottom:1px solid #f0e6d8;
 }
-.toolbar span{
+.toolbar span {
     margin-right:12px;
     color:#a05d2c;
     cursor:pointer;
 }
-.post{
+.post {
     padding:12px 14px;
     border-bottom:1px solid #f3eadf;
 }
-.username{
+.username {
     font-size:15px;
     font-weight:bold;
     margin-bottom:4px;
 }
-.meta-user{
+.hidden-name {
+    visibility:hidden;
+    height:16px;
+}
+.meta-user {
     font-size:13px;
     color:#9c8b7d;
     margin-bottom:6px;
 }
-.floor{
+.floor {
     font-size:13px;
     color:#8c7c6d;
     margin-bottom:4px;
 }
-.content{
+.content {
     font-size:16px;
     line-height:1.6;
+    white-space:normal;
     margin:3px 0 5px 0;
 }
-.deleted{
+.deleted {
     color:#b3a79b;
     font-style:italic;
 }
-.actions{
+.actions {
     margin-top:4px;
     font-size:12px;
     display:flex;
     justify-content:space-between;
 }
-.actions span{
+.actions span {
     margin-right:10px;
     color:#a05d2c;
     cursor:pointer;
 }
-.pagebar{
+.pagebar {
     padding:10px 14px;
     text-align:center;
     font-size:12px;
     background:#faf6ef;
 }
-.pagebar span{
+.pagebar span {
     margin:0 6px;
     cursor:pointer;
     color:#a05d2c;
 }
-.pagebar .current{
-    font-weight:bold;
-}
-.quote-box{
+.quote-box {
     padding:10px 14px;
     background:#fff3df;
     border-top:1px solid #e6d6bf;
@@ -126,28 +128,30 @@ body{
         <span class="back-home" onclick="goHome()">← 论坛主页</span>
         橘子小镇论坛
     </div>
+
     <div class="thread-title">
-        「求助」我的狗总是对邻居的狗进行骑跨行为
+        「求助」我的狗总是对邻居的狗进行骑跨行为，对方主人尖叫，我该怎么道歉？
     </div>
+
     <div class="meta">
         浏览量：1843 ｜ 回复：62
     </div>
+
     <div class="toolbar">
         <span onclick="toggleOP(true)">只看楼主</span>
         <span onclick="toggleOP(false)">全部</span>
     </div>
+
     <div id="posts"></div>
     <div class="pagebar" id="pagebar"></div>
     <div id="quoteArea"></div>
 </div>
 
 <script>
-const OP_NAME = "我家狗狗可爱";
-let onlyOP = false;
 let currentPage = 1;
-let postsData = [];
-let pageCounts = {}; // 每页实际帖子数
-const totalPages = 3; // 你总共有几页
+let onlyOP = false;
+const OP_NAME = "我家狗狗可爱";
+let postsData = []; // 会由 pageX.js 填充
 
 function getLevel(points){
     if(points>2000) return "资深居民";
@@ -157,81 +161,75 @@ function getLevel(points){
 }
 
 function randomIP(){
-    return "IP:192.168."+Math.floor(Math.random()*255)+"."+Math.floor(Math.random()*255);
+    return "IP: 192.168."+Math.floor(Math.random()*255)+"."+Math.floor(Math.random()*255);
 }
 
 function goHome(){
     window.location.href="home.html";
 }
 
+// 切换只看楼主
 function toggleOP(val){
     onlyOP = val;
-    renderPage(currentPage);
+    renderPage(currentPage, postsData);
 }
 
-function renderPage(page){
-    currentPage = page;
+// 渲染帖子和页码
+function renderPage(pageNum, allPosts){
+    currentPage = pageNum;
+
     const container = document.getElementById("posts");
     container.innerHTML = "";
 
-    const filtered = onlyOP ? postsData.filter(p=>p.name===OP_NAME) : postsData;
+    let filtered = onlyOP ? allPosts.filter(p => p.name === OP_NAME) : allPosts;
 
-    // 计算前面页的楼层偏移
-    let offset = 0;
-    for(let i=1;i<page;i++){
-        if(pageCounts[i]) offset += pageCounts[i];
-    }
-
-    filtered.forEach((p,i)=>{
-        const floor = offset + i + 1;
+    filtered.forEach((p, i)=>{
+        const floorNumber = allPosts.indexOf(p) + 1; // 用总数组索引保证楼层连续
         const isOP = p.name === OP_NAME;
         const nameHTML = `<div class="username">${p.name || '匿名'}${isOP?'（楼主）':''}</div>`;
         const post = document.createElement("div");
         post.className = "post";
         post.innerHTML = `
             ${nameHTML}
-            <div class="meta-user">积分 ${p.points||0} ｜ ${getLevel(p.points||0)} ｜ ${randomIP()}</div>
-            <div class="floor">${floor}楼 ｜ 发表于 ${p.time}</div>
-            <div class="content ${p.deleted?'deleted':''}">${p.deleted?'该帖已被删除':p.content.replace(/\n/g,'<br>')}</div>
-            <div class="actions">${!p.deleted?`<span onclick="quotePost(${floor})">引用</span><span style="color:#b5a79a;">举报</span>`:''}</div>
+            <div class="meta-user">
+                积分 ${p.points||0} ｜ ${getLevel(p.points||0)} ｜ ${randomIP()}
+            </div>
+            <div class="floor">
+                ${floorNumber}楼 ｜ 发表于 ${p.time}
+            </div>
+            <div class="content ${p.deleted?'deleted':''}">
+                ${p.deleted?'该帖已被删除':p.content.replace(/\n/g,'<br>')}
+            </div>
+            <div class="actions">
+                ${!p.deleted?`<span onclick="quotePost(${floorNumber})">引用</span><span style="color:#b5a79a;">举报</span>`:''}
+            </div>
         `;
         container.appendChild(post);
     });
 
-    pageCounts[page] = filtered.length;
-    renderPageBar();
-}
-
-function renderPageBar(){
+    // 渲染页码
     const bar = document.getElementById("pagebar");
     bar.innerHTML = "";
-    for(let i=1;i<=totalPages;i++){
-        const span = document.createElement("span");
-        span.innerText = i;
-        if(i===currentPage) span.className="current";
-        span.onclick = ()=>{loadPage(i);};
-        bar.appendChild(span);
+    for(let i=0; i<allPosts.length; i++){
+        if(allPosts[i].page && !bar.querySelector(`[data-page='${allPosts[i].page}']`)){
+            const span = document.createElement("span");
+            span.dataset.page = allPosts[i].page;
+            span.innerText = allPosts[i].page;
+            if(allPosts[i].page === currentPage) span.style.fontWeight = "bold";
+            span.onclick = ()=> renderPage(allPosts[i].page, allPosts);
+            bar.appendChild(span);
+        }
     }
 }
 
+// 引用帖子
 function quotePost(floor){
-    document.getElementById("quoteArea").innerHTML = `<div class="quote-box">引用 ${floor}楼：<br>（内容略）</div>`;
+    const area = document.getElementById("quoteArea");
+    area.innerHTML = `<div class="quote-box">引用 ${floor}楼：<br>（内容略）</div>`;
 }
-
-// 加载每页的 JS 文件
-function loadPage(page){
-    currentPage = page;
-    const oldScript = document.getElementById("pageScript");
-    if(oldScript) oldScript.remove();
-
-    const script = document.createElement("script");
-    script.src = "page"+page+".js?" + Date.now();
-    script.id = "pageScript";
-    document.body.appendChild(script);
-}
-
-// 初始加载第一页
-loadPage(1);
 </script>
+<script src="page1.js"></script>
+<script src="page2.js"></script>
+<script src="page3.js"></script>
 </body>
 </html>
