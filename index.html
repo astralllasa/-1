@@ -18,7 +18,20 @@
     .username{ font-size:13px; font-weight:bold; margin-bottom:4px; color: #4a3c2e; }
     .meta-user{ font-size:11px; color:#9c8b7d; margin-bottom:6px; }
     .floor{ font-size:12px; color:#8c7c6d; margin-bottom:4px; font-family: Georgia, serif; }
-    .content{ font-size:14px; line-height:1.6; color: #333; margin:3px 0 5px 0; word-wrap: break-word; }
+    
+    /* --- 新增：引用块样式 --- */
+    .quote-container {
+        background: #f1e9db;
+        border-left: 4px solid #c58f5c;
+        padding: 10px;
+        margin: 8px 0 12px 0;
+        font-size: 13px;
+        color: #7d6e5e;
+        border-radius: 2px;
+        line-height: 1.5;
+    }
+
+    .content{ font-size:14px; line-height:1.6; color: #333; margin:3px 0 5px 0; word-wrap: break-word; white-space: pre-wrap; }
     .deleted{ color:#b3a79b; font-style:italic; }
     .actions{ margin-top:4px; font-size:12px; display:flex; justify-content:flex-end; }
     .actions span{ margin-left:15px; color:#a05d2c; cursor:pointer; }
@@ -69,16 +82,11 @@ function randomIP(seed) {
     return "IP: 114.242." + (seed % 255) + "." + (Math.floor(seed * 1.5) % 255);
 }
 
-/**
- * Step 1: External JS Loader
- * Your external files (page1.js, etc.) should call render(data, pageNum)
- */
 function loadPage(page){
     currentPage = page;
     const old = document.getElementById("pageScript");
     if(old) old.remove();
     
-    // Check cache first to avoid re-downloading
     if(allPostsData[page]) {
         renderPosts();
         renderPages();
@@ -90,9 +98,6 @@ function loadPage(page){
     }
 }
 
-/**
- * Step 2: Render Trigger (Called by external JS)
- */
 function render(data, page){
     allPostsData[page] = data;
     renderPosts();
@@ -100,7 +105,7 @@ function render(data, page){
 }
 
 /**
- * Step 3: Fixed Floor Logic
+ * 修改后的渲染逻辑：支持引用块
  */
 function renderPosts(){
     const container = document.getElementById("posts");
@@ -108,27 +113,26 @@ function renderPosts(){
 
     const currentPageData = allPostsData[currentPage] || [];
 
-    // Calculate how many posts exist in ALL previous pages combined
     let globalOffset = 0;
     for(let i = 1; i < currentPage; i++){
         if(allPostsData[i]){
             globalOffset += allPostsData[i].length;
-        } else {
-            // If previous page isn't loaded, we can't know the exact count
-            // Logic: Assume 10 if missing, or force sequential loading
-            globalOffset += 0; 
         }
     }
 
     currentPageData.forEach((p, indexInPage) => {
-        // FIXED GLOBAL FLOOR: page_start + current_index + 1
         const globalFloor = globalOffset + indexInPage + 1;
 
-        // If "Only OP" is enabled, hide others but don't change globalFloor
         if(onlyOP && p.name !== OP_NAME) return;
 
         const level = getLevel(p.points || 0);
         const isOP = p.name === OP_NAME;
+
+        // --- 核心修改：生成引用块逻辑 ---
+        let quoteHTML = "";
+        if (p.quote) {
+            quoteHTML = `<div class="quote-container">“ ${p.quote} ”</div>`;
+        }
 
         const postDiv = document.createElement("div");
         postDiv.className = "post";
@@ -136,6 +140,7 @@ function renderPosts(){
             <div class="username">${p.name || "匿名"} ${isOP ? "<span style='color:#c58f5c'>(楼主)</span>" : ""}</div>
             <div class="meta-user">积分 ${p.points || 0} ｜ ${level} ｜ ${randomIP(globalFloor)}</div>
             <div class="floor">${globalFloor}楼 ｜ 发表于 ${p.time}</div>
+            ${quoteHTML} 
             <div class="content ${p.deleted ? "deleted" : ""}">${p.deleted ? "该帖已被删除" : p.content.replace(/\n/g,"<br>")}</div>
             <div class="actions">
                 ${!p.deleted ? `<span onclick="quotePost(${globalFloor})">引用</span><span>举报</span>` : ""}
@@ -149,7 +154,6 @@ function renderPosts(){
 function renderPages(){
     const bar = document.getElementById("pagebar");
     bar.innerHTML = "";
-    // Assuming 3 pages for this demo; usually you'd get totalPages from a config
     const totalPages = 3; 
 
     for(let i = 1; i <= totalPages; i++){
@@ -171,9 +175,9 @@ function toggleOP(val){
 function quotePost(floor){
     const area = document.getElementById("quoteArea");
     area.innerHTML = `<div class="quote-box">正在引用第 ${floor} 楼的内容...</div>`;
+    // 提示：视觉小说中这里可以触发一个跳转到输入框的动作
 }
 
-// Initial Load
 loadPage(1);
 </script>
 
