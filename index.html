@@ -219,7 +219,9 @@ function render(data){
     let filtered=onlyOP?postsData.filter(p=>p.name===OP_NAME):postsData;
 
     filtered.forEach((p,i)=>{
-        const floorNumber=i+1;
+        const start = (currentPage - 1) * pageSize;
+				filtered.forEach((p,i)=>{
+    			const floorNumber = start + i + 1;
         const level=getLevel(p.points||0);
         const isOP=p.name===OP_NAME;
 
