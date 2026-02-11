@@ -3,288 +3,179 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>橘子小镇论坛</title>
-
+<title>橘子小镇论坛 - 帖子详情</title>
 <style>
-body{
-    margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,Tahoma,Arial;
-    background-image:url("orange.png");
-    background-repeat:repeat;
-    background-size:120px;
-}
-
-/* 模拟手机壳 */
-.phone{
-    max-width:420px;
-    margin:20px auto;
-    background:#fffdf8;
-    border-radius:18px;
-    box-shadow:0 8px 30px rgba(0,0,0,0.08);
-    overflow:hidden;
-}
-
-/* 顶部 */
-.topbar{
-    background:#c58f5c;
-    color:white;
-    padding:12px;
-    font-size:15px;
-    text-align:center;
-    position:relative;
-}
-
-.back-home{
-    position:absolute;
-    left:12px;
-    cursor:pointer;
-    font-size:13px;
-    opacity:0.9;
-}
-
-.thread-title{
-    padding:14px;
-    font-size:15px;
-    font-weight:bold;
-    background:#f6efe5;
-    border-bottom:1px solid #eee3d4;
-}
-
-.meta{
-    padding:8px 14px;
-    font-size:12px;
-    color:#8c7c6d;
-    border-bottom:1px solid #f0e6d8;
-}
-
-.toolbar{
-    padding:8px 14px;
-    font-size:12px;
-    background:#faf6ef;
-    border-bottom:1px solid #f0e6d8;
-}
-
-.toolbar span{
-    margin-right:12px;
-    color:#a05d2c;
-    cursor:pointer;
-}
-
-/* 楼层 */
-.post{
-    padding:12px 14px;
-    border-bottom:1px solid #f3eadf;
-}
-
-.username{
-    font-size:13px;
-    font-weight:bold;
-    margin-bottom:4px;
-}
-
-.hidden-name{
-    visibility:hidden;
-    height:16px;
-}
-
-.meta-user{
-    font-size:11px;
-    color:#9c8b7d;
-    margin-bottom:6px;
-}
-
-.floor{
-    font-size:12px;
-    color:#8c7c6d;
-    margin-bottom:4px;
-}
-
-.content{
-    font-size:14px;
-    line-height:1.6;
-    white-space:normal;
-    margin:3px 0 5px 0;
-}
-
-.deleted{
-    color:#b3a79b;
-    font-style:italic;
-}
-
-.actions{
-    margin-top:4px;
-    font-size:12px;
-    display:flex;
-    justify-content:space-between;
-}
-
-.actions span{
-    margin-right:10px;
-    color:#a05d2c;
-    cursor:pointer;
-}
-
-.pagebar{
-    padding:10px 14px;
-    text-align:center;
-    font-size:12px;
-    background:#faf6ef;
-}
-
-.pagebar span{
-    margin:0 6px;
-    cursor:pointer;
-    color:#a05d2c;
-}
-
-.quote-box{
-    padding:10px 14px;
-    background:#fff3df;
-    border-top:1px solid #e6d6bf;
-    font-size:13px;
-}
+    body{ margin:0; font-family:-apple-system,BlinkMacSystemFont,Tahoma,Arial; background-image:url("orange.png"); background-repeat:repeat; background-size:120px; background-color: #fdf6ec; }
+    .phone{ max-width:420px; margin:20px auto; background:#fffdf8; border-radius:18px; box-shadow:0 8px 30px rgba(0,0,0,0.08); overflow:hidden; min-height: 90vh; }
+    .topbar{ background:#c58f5c; color:white; padding:12px; font-size:15px; text-align:center; position:relative; }
+    .back-home{ position:absolute; left:12px; cursor:pointer; font-size:13px; opacity:0.9; }
+    .thread-title{ padding:14px; font-size:15px; font-weight:bold; background:#f6efe5; border-bottom:1px solid #eee3d4; color: #5a4a3a; }
+    .meta{ padding:8px 14px; font-size:12px; color:#8c7c6d; border-bottom:1px solid #f0e6d8; }
+    .toolbar{ padding:8px 14px; font-size:12px; background:#faf6ef; border-bottom:1px solid #f0e6d8; display: flex; gap: 15px; }
+    .toolbar span{ color:#a05d2c; cursor:pointer; padding: 2px 6px; border-radius: 4px; }
+    .toolbar span.active { background: #e6d6bf; font-weight: bold; }
+    .post{ padding:12px 14px; border-bottom:1px solid #f3eadf; }
+    .username{ font-size:13px; font-weight:bold; margin-bottom:4px; color: #4a3c2e; }
+    .meta-user{ font-size:11px; color:#9c8b7d; margin-bottom:6px; }
+    .floor{ font-size:12px; color:#8c7c6d; margin-bottom:4px; font-family: Georgia, serif; }
+    .content{ font-size:14px; line-height:1.6; color: #333; margin:3px 0 5px 0; word-wrap: break-word; }
+    .deleted{ color:#b3a79b; font-style:italic; }
+    .actions{ margin-top:4px; font-size:12px; display:flex; justify-content:flex-end; }
+    .actions span{ margin-left:15px; color:#a05d2c; cursor:pointer; }
+    .pagebar{ padding:15px 14px; text-align:center; font-size:13px; background:#faf6ef; border-top: 1px solid #eee; }
+    .pagebar span{ margin:0 8px; cursor:pointer; color:#a05d2c; padding: 4px 8px; }
+    .pagebar span.current { font-weight:bold; text-decoration: underline; color: #6d3a15; }
+    .quote-box{ padding:10px 14px; background:#fff3df; border-top:1px solid #e6d6bf; font-size:13px; color: #7d664a; }
 </style>
 </head>
-
 <body>
 
 <div class="phone">
+    <div class="topbar">
+        <span class="back-home" onclick="alert('返回主页')">← 论坛主页</span>
+        橘子小镇论坛
+    </div>
 
-<div class="topbar">
-    <span class="back-home" onclick="goHome()">← 论坛主页</span>
-    橘子小镇论坛
-</div>
+    <div class="thread-title">
+        「求助」我的狗总是对邻居的狗进行骑跨行为，对方主人每次都吓得尖叫，我该怎么道歉？
+    </div>
 
-<div class="thread-title">
-「求助」我的狗总是对邻居的狗进行骑跨行为，对方主人每次都吓得尖叫，我该怎么道歉？
-</div>
+    <div class="meta">浏览量：1843 ｜ 回复：62</div>
 
-<div class="meta">
-浏览量：1843 ｜ 回复：62
-</div>
+    <div class="toolbar">
+        <span id="btnAll" class="active" onclick="toggleOP(false)">全部内容</span>
+        <span id="btnOP" onclick="toggleOP(true)">只看楼主</span>
+    </div>
 
-<div class="toolbar">
-<span onclick="toggleOP(true)">只看楼主</span>
-<span onclick="toggleOP(false)">全部</span>
-</div>
-
-<div id="posts"></div>
-<div class="pagebar" id="pagebar"></div>
-<div id="quoteArea"></div>
-
+    <div id="posts"></div>
+    <div class="pagebar" id="pagebar"></div>
+    <div id="quoteArea"></div>
 </div>
 
 <script>
 let currentPage = 1;
 const OP_NAME = "我家狗狗可爱";
 let onlyOP = false;
-let allPostsData = {}; // 保存每页所有帖子 {1:[...],2:[...]}
+let allPostsData = {}; 
 
-/* 等级函数 */
 function getLevel(points){
-    if(points>2000) return "资深居民";
-    if(points>1000) return "常驻居民";
-    if(points>300) return "小镇居民";
+    if(points > 2000) return "资深居民";
+    if(points > 1000) return "常驻居民";
+    if(points > 300) return "小镇居民";
     return "新居民";
 }
 
-function randomIP(){
-    return "IP: 192.168."+Math.floor(Math.random()*255)+"."+Math.floor(Math.random()*255);
+function randomIP(seed) {
+    return "IP: 114.242." + (seed % 255) + "." + (Math.floor(seed * 1.5) % 255);
 }
 
-/* 加载分页文件 */
+/**
+ * Step 1: External JS Loader
+ * Your external files (page1.js, etc.) should call render(data, pageNum)
+ */
 function loadPage(page){
     currentPage = page;
     const old = document.getElementById("pageScript");
     if(old) old.remove();
-    const script = document.createElement("script");
-    script.src = "page"+page+".js?"+Date.now();
-    script.id = "pageScript";
-    document.body.appendChild(script);
+    
+    // Check cache first to avoid re-downloading
+    if(allPostsData[page]) {
+        renderPosts();
+        renderPages();
+    } else {
+        const script = document.createElement("script");
+        script.src = `page${page}.js?v=${Date.now()}`;
+        script.id = "pageScript";
+        document.body.appendChild(script);
+    }
 }
 
-/* render 由 pageX.js 调用，传入页码 */
+/**
+ * Step 2: Render Trigger (Called by external JS)
+ */
 function render(data, page){
     allPostsData[page] = data;
     renderPosts();
     renderPages();
 }
 
-/* 渲染帖子 */
+/**
+ * Step 3: Fixed Floor Logic
+ */
 function renderPosts(){
     const container = document.getElementById("posts");
     container.innerHTML = "";
 
-    // 计算当前页所有帖子的楼层号
-    let postsToRender = allPostsData[currentPage] || [];
+    const currentPageData = allPostsData[currentPage] || [];
 
-    // 根据 onlyOP 过滤
-    let filteredPosts = onlyOP ? postsToRender.filter(p => p.name === OP_NAME) : postsToRender;
-
-    filteredPosts.forEach((p, i)=>{
-        // 楼层号 = 前面所有页累计帖子数量 + 当前页索引 +1
-        let floor = 0;
-        for(let page=1; page<currentPage; page++){
-            let pagePosts = allPostsData[page] || [];
-            if(onlyOP) pagePosts = pagePosts.filter(x => x.name===OP_NAME);
-            floor += pagePosts.length;
+    // Calculate how many posts exist in ALL previous pages combined
+    let globalOffset = 0;
+    for(let i = 1; i < currentPage; i++){
+        if(allPostsData[i]){
+            globalOffset += allPostsData[i].length;
+        } else {
+            // If previous page isn't loaded, we can't know the exact count
+            // Logic: Assume 10 if missing, or force sequential loading
+            globalOffset += 0; 
         }
-        floor += i+1;
+    }
 
-        const level = getLevel(p.points||0);
-        const isOP = p.name===OP_NAME;
+    currentPageData.forEach((p, indexInPage) => {
+        // FIXED GLOBAL FLOOR: page_start + current_index + 1
+        const globalFloor = globalOffset + indexInPage + 1;
 
-        const postHTML = document.createElement("div");
-        postHTML.className="post";
-        postHTML.innerHTML=`
-            <div class="username">${p.name||"匿名"} ${isOP?"（楼主）":""}</div>
-            <div class="meta-user">积分 ${p.points||0} ｜ ${level} ｜ ${randomIP()}</div>
-            <div class="floor">${floor}楼 ｜ 发表于 ${p.time}</div>
-            <div class="content ${p.deleted?"deleted":""}">${p.deleted?"该帖已被删除":p.content.replace(/\n/g,"<br>")}</div>
+        // If "Only OP" is enabled, hide others but don't change globalFloor
+        if(onlyOP && p.name !== OP_NAME) return;
+
+        const level = getLevel(p.points || 0);
+        const isOP = p.name === OP_NAME;
+
+        const postDiv = document.createElement("div");
+        postDiv.className = "post";
+        postDiv.innerHTML = `
+            <div class="username">${p.name || "匿名"} ${isOP ? "<span style='color:#c58f5c'>(楼主)</span>" : ""}</div>
+            <div class="meta-user">积分 ${p.points || 0} ｜ ${level} ｜ ${randomIP(globalFloor)}</div>
+            <div class="floor">${globalFloor}楼 ｜ 发表于 ${p.time}</div>
+            <div class="content ${p.deleted ? "deleted" : ""}">${p.deleted ? "该帖已被删除" : p.content.replace(/\n/g,"<br>")}</div>
             <div class="actions">
-                ${!p.deleted?`<span onclick="quotePost(${floor})">引用</span><span style="color:#b5a79a;">举报</span>`:""}
+                ${!p.deleted ? `<span onclick="quotePost(${globalFloor})">引用</span><span>举报</span>` : ""}
             </div>
         `;
-        container.appendChild(postHTML);
+        container.appendChild(postDiv);
     });
+    window.scrollTo(0,0);
 }
 
-/* 渲染分页 */
 function renderPages(){
     const bar = document.getElementById("pagebar");
-    bar.innerHTML="";
-    const totalPages = Object.keys(allPostsData).length || 3;
+    bar.innerHTML = "";
+    // Assuming 3 pages for this demo; usually you'd get totalPages from a config
+    const totalPages = 3; 
 
-    for(let i=1;i<=totalPages;i++){
+    for(let i = 1; i <= totalPages; i++){
         const span = document.createElement("span");
-        span.innerText=i;
-        if(i===currentPage) span.style.fontWeight="bold";
-        span.onclick = ()=>loadPage(i);
+        span.innerText = i;
+        if(i === currentPage) span.className = "current";
+        span.onclick = () => loadPage(i);
         bar.appendChild(span);
     }
 }
 
-/* 切换只看楼主 */
 function toggleOP(val){
     onlyOP = val;
+    document.getElementById("btnOP").className = val ? "active" : "";
+    document.getElementById("btnAll").className = val ? "" : "active";
     renderPosts();
 }
 
 function quotePost(floor){
     const area = document.getElementById("quoteArea");
-    area.innerHTML=`<div class="quote-box">引用 ${floor}楼：<br>（内容略）</div>`;
+    area.innerHTML = `<div class="quote-box">正在引用第 ${floor} 楼的内容...</div>`;
 }
 
-function goHome(){
-    window.location.href="home.html";
-}
-
-/* 初始加载第一页 */
+// Initial Load
 loadPage(1);
 </script>
-
-
-
 
 </body>
 </html>
