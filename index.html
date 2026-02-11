@@ -14,7 +14,6 @@ body{
     background-size:120px;
 }
 
-
 /* 模拟手机壳 */
 .phone{
     max-width:420px;
@@ -156,7 +155,6 @@ body{
     橘子小镇论坛
 </div>
 
-
 <div class="thread-title">
 「求助」我的狗总是对邻居的狗进行骑跨行为，对方主人每次都吓得尖叫，我该怎么道歉？
 </div>
@@ -166,7 +164,7 @@ body{
 </div>
 
 <div class="toolbar">
-<span onclick="toggleOP()">只看楼主</span>
+<span onclick="toggleOP(true)">只看楼主</span>
 <span onclick="toggleOP(false)">全部</span>
 </div>
 
@@ -176,10 +174,12 @@ body{
 
 </div>
 
+<script>
 let currentPage = 1;
 let onlyOP = false;
 const OP_NAME = "我家狗狗可爱";
 let postsData = []; // 当前页帖子数据
+let totalPostsCount = 0; // 全局累计楼层数
 
 /* 等级 */
 function getLevel(points){
@@ -207,7 +207,7 @@ function loadPage(page){
 }
 
 /* 渲染帖子 */
-function render(data, totalPostsBefore = 0){
+function render(data){
     postsData = data;
     const container = document.getElementById("posts");
     container.innerHTML = "";
@@ -215,7 +215,7 @@ function render(data, totalPostsBefore = 0){
     let filtered = onlyOP ? postsData.filter(p => p.name === OP_NAME) : postsData;
 
     filtered.forEach((p, i) => {
-        const floorNumber = totalPostsBefore + i + 1; // 当前楼层号
+        const floorNumber = totalPostsCount + i + 1;
         const level = getLevel(p.points || 0);
         const isOP = p.name === OP_NAME;
 
@@ -248,14 +248,15 @@ function render(data, totalPostsBefore = 0){
         container.appendChild(post);
     });
 
-    renderPages(totalPostsBefore);
+    totalPostsCount += filtered.length; // 累加楼层数
+    renderPages();
 }
 
 /* 渲染分页栏 */
-function renderPages(totalPostsBefore = 0){
+function renderPages(){
     const bar = document.getElementById("pagebar");
     bar.innerHTML = "";
-    const totalPages = 3; // 假设总共3页，可按需调整
+    const totalPages = 3; // 根据你的分页文件数量修改
 
     for(let i = 1; i <= totalPages; i++){
         const span = document.createElement("span");
@@ -263,12 +264,8 @@ function renderPages(totalPostsBefore = 0){
         if(i === currentPage) span.style.fontWeight = "bold";
 
         span.onclick = () => {
-            // 每次加载新页时计算前面楼层数
-            let prevCount = 0;
-            for(let j = 1; j < i; j++){
-                // 如果每页帖子数量固定，用固定值，否则这里可以改成从总数据获取长度
-                prevCount += 10; 
-            }
+            // 切页时重置累计楼层计数（可按需改）
+            totalPostsCount = (i - 1) * 0; // 可以设置为 0 或从服务器获取前面楼层总数
             loadPage(i);
         };
 
@@ -281,12 +278,10 @@ function goHome(){
     window.location.href = "home.html";
 }
 
-function toggleOP(val = true){
+function toggleOP(val){
     onlyOP = val;
-
-    // 重新计算前面楼层数
-    const prevCount = (currentPage - 1) * postsData.length; 
-    render(postsData, prevCount);
+    // 只看楼主时楼层号不改变
+    render(postsData);
 }
 
 function quotePost(floor){
