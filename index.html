@@ -178,10 +178,9 @@ body{
 let currentPage = 1;
 let onlyOP = false;
 const OP_NAME = "我家狗狗可爱";
-let postsData = []; // 当前页帖子数据
-let totalPostsCount = 0; // 全局累计楼层数
+let allPostsData = {}; // 保存每页的帖子数据 {1: [...], 2: [...]}
+let pageCount = 3; // 总页数，根据你的 pageX.js 文件数量调整
 
-/* 等级 */
 function getLevel(points){
     if(points > 2000) return "资深居民";
     if(points > 1000) return "常驻居民";
@@ -206,29 +205,41 @@ function loadPage(page){
     document.body.appendChild(script);
 }
 
-/* 渲染帖子 */
+/* render 由 pageX.js 调用，确保传入的数据保存 */
 function render(data){
-    postsData = data;
+    allPostsData[currentPage] = data; // 保存当前页数据
+    renderPosts();
+    renderPages();
+}
+
+/* 渲染帖子（根据 onlyOP 过滤和跨页累计楼层号） */
+function renderPosts(){
     const container = document.getElementById("posts");
     container.innerHTML = "";
 
-    let filtered = onlyOP ? postsData.filter(p => p.name === OP_NAME) : postsData;
+    let totalBefore = 0;
+    for(let p = 1; p < currentPage; p++){
+        if(allPostsData[p]){
+            totalBefore += allPostsData[p].length;
+        }
+    }
 
-    filtered.forEach((p, i) => {
-        const floorNumber = totalPostsCount + i + 1;
+    let posts = allPostsData[currentPage] || [];
+    if(onlyOP){
+        posts = posts.filter(p => p.name === OP_NAME);
+    }
+
+    posts.forEach((p, i) => {
+        const floorNumber = totalBefore + i + 1;
         const level = getLevel(p.points || 0);
         const isOP = p.name === OP_NAME;
 
-        const nameHTML = `<div class="username">
-                ${p.name || '匿名'}
-                ${isOP ? '（楼主）' : ''}
-        </div>`;
-
-        const post = document.createElement("div");
-        post.className = "post";
-
-        post.innerHTML = `
-            ${nameHTML}
+        const postHTML = document.createElement("div");
+        postHTML.className = "post";
+        postHTML.innerHTML = `
+            <div class="username">
+                ${p.name || '匿名'} ${isOP ? '（楼主）' : ''}
+            </div>
             <div class="meta-user">
                 积分 ${p.points || 0} ｜ ${level} ｜ ${randomIP()}
             </div>
@@ -236,67 +247,50 @@ function render(data){
                 ${floorNumber}楼 ｜ 发表于 ${p.time}
             </div>
             <div class="content ${p.deleted ? 'deleted' : ''}">
-                ${p.deleted ? '该帖已被删除' : p.content.replace(/\n/g, '<br>')}
+                ${p.deleted ? '该帖已被删除' : p.content.replace(/\n/g,'<br>')}
             </div>
             <div class="actions">
-                ${!p.deleted ? `
-                    <span onclick="quotePost(${floorNumber})">引用</span>
-                    <span style="color:#b5a79a;">举报</span>
-                ` : ''}
+                ${!p.deleted ? `<span onclick="quotePost(${floorNumber})">引用</span><span style="color:#b5a79a;">举报</span>` : ''}
             </div>
         `;
-        container.appendChild(post);
+        container.appendChild(postHTML);
     });
-
-    totalPostsCount += filtered.length; // 累加楼层数
-    renderPages();
 }
 
 /* 渲染分页栏 */
 function renderPages(){
     const bar = document.getElementById("pagebar");
     bar.innerHTML = "";
-    const totalPages = 3; // 根据你的分页文件数量修改
 
-    for(let i = 1; i <= totalPages; i++){
+    for(let i=1;i<=pageCount;i++){
         const span = document.createElement("span");
         span.innerText = i;
-        if(i === currentPage) span.style.fontWeight = "bold";
-
-        span.onclick = () => {
-            // 切页时重置累计楼层计数（可按需改）
-            totalPostsCount = (i - 1) * 0; // 可以设置为 0 或从服务器获取前面楼层总数
-            loadPage(i);
-        };
-
+        if(i===currentPage) span.style.fontWeight="bold";
+        span.onclick = () => loadPage(i);
         bar.appendChild(span);
     }
 }
 
-/* 返回键 */
-function goHome(){
-    window.location.href = "home.html";
-}
-
+/* 只看楼主 */
 function toggleOP(val){
     onlyOP = val;
-    // 只看楼主时楼层号不改变
-    render(postsData);
+    renderPosts(); // 不重置 totalBefore，楼层号自动连续
+}
+
+/* 返回主页 */
+function goHome(){
+    window.location.href="home.html";
 }
 
 function quotePost(floor){
     const area = document.getElementById("quoteArea");
-    area.innerHTML = `
-    <div class="quote-box">
-        引用 ${floor}楼：
-        <br>（内容略）
-    </div>
-    `;
+    area.innerHTML = `<div class="quote-box">引用 ${floor}楼：<br>（内容略）</div>`;
 }
 
 /* 初始加载第一页 */
 loadPage(1);
 </script>
+
 
 
 </body>
