@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>橘子小镇论坛</title>
+
+<style>
+body{
+    margin:0;
+    background:#e9e4db;
+    font-family:-apple-system,BlinkMacSystemFont,Tahoma,Arial;
+}
+
+/* 模拟手机壳 */
+.phone{
+    max-width:420px;
+    margin:20px auto;
+    background:#fffdf8;
+    border-radius:18px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.08);
+    overflow:hidden;
+}
+
+/* 顶部 */
+.topbar{
+    background:#c58f5c;
+    color:white;
+    padding:12px;
+    font-size:15px;
+    text-align:center;
+}
+
+.thread-title{
+    padding:14px;
+    font-size:15px;
+    font-weight:bold;
+    background:#f6efe5;
+    border-bottom:1px solid #eee3d4;
+}
+
+.meta{
+    padding:8px 14px;
+    font-size:12px;
+    color:#8c7c6d;
+    border-bottom:1px solid #f0e6d8;
+}
+
+.toolbar{
+    padding:8px 14px;
+    font-size:12px;
+    background:#faf6ef;
+    border-bottom:1px solid #f0e6d8;
+}
+
+.toolbar span{
+    margin-right:12px;
+    color:#a05d2c;
+    cursor:pointer;
+}
+
+/* 楼层 */
+.post{
+    padding:12px 14px;
+    border-bottom:1px solid #f3eadf;
+}
+
+.username{
+    font-size:13px;
+    font-weight:bold;
+    margin-bottom:4px;
+}
+
+.hidden-name{
+    visibility:hidden;
+    height:16px;
+}
+
+.meta-user{
+    font-size:11px;
+    color:#9c8b7d;
+    margin-bottom:6px;
+}
+
+.floor{
+    font-size:12px;
+    color:#8c7c6d;
+    margin-bottom:6px;
+}
+
+.content{
+    font-size:14px;
+    line-height:1.6;
+    white-space:pre-line;
+}
+
+.deleted{
+    color:#b3a79b;
+    font-style:italic;
+}
+
+.actions{
+    margin-top:6px;
+    font-size:12px;
+}
+
+.actions span{
+    margin-right:10px;
+    color:#a05d2c;
+    cursor:pointer;
+}
+
+.pagebar{
+    padding:10px 14px;
+    text-align:center;
+    font-size:12px;
+    background:#faf6ef;
+}
+
+.pagebar span{
+    margin:0 6px;
+    cursor:pointer;
+    color:#a05d2c;
+}
+
+.quote-box{
+    padding:10px 14px;
+    background:#fff3df;
+    border-top:1px solid #e6d6bf;
+    font-size:13px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="phone">
+
+<div class="topbar">橘子小镇论坛</div>
+
+<div class="thread-title">
+「求助」我的狗总是对邻居的狗进行骑跨行为……
+</div>
+
+<div class="meta">
+浏览量：1843 ｜ 回复：62
+</div>
+
+<div class="toolbar">
+<span onclick="toggleOP()">只看楼主</span>
+<span onclick="toggleOP(false)">全部</span>
+</div>
+
+<div id="posts"></div>
+<div class="pagebar" id="pagebar"></div>
+<div id="quoteArea"></div>
+
+</div>
+
+<script>
+let currentPage=1;
+const pageSize=6;
+let onlyOP=false;
+const OP_NAME="我家狗狗可爱";
+
+function getLevel(points){
+    if(points>2000) return "资深居民";
+    if(points>1000) return "常驻居民";
+    if(points>300) return "小镇居民";
+    return "新居民";
+}
+
+function randomIP(){
+    return "IP: 192.168."+Math.floor(Math.random()*255)+"."+Math.floor(Math.random()*255);
+}
+
+const postsData=[
+{content:`如题。真的非常抱歉这么早打扰大家，但我实在是太苦恼了……
+情况是这样的：我养了一只金毛，两岁，叫狗狗，公的，早就绝育了。
+每次看到那只边牧就会扑倒对方……对方主人会尖叫。
+我该怎么道歉？`,op:true,points:1250},
+
+{content:"凌晨四点半遛狗……楼主是个狠人。",points:320},
+{content:"你家狗居然就叫狗狗？",points:800},
+{content:"不好意思……明天还要遛狗……",op:true,points:1250},
+{content:"建议带点吃的试试。",points:210},
+{content:"（该帖被删除）",deleted:true,points:300},
+{content:"蹲后续。",points:600},
+{content:"他咬了一口饭团后表情亮了。",op:true,points:1250}
+];
+
+function render(){
+    const container=document.getElementById("posts");
+    container.innerHTML="";
+    let filtered=onlyOP?postsData.filter(p=>p.op):postsData;
+    const totalPages=Math.ceil(filtered.length/pageSize);
+    const start=(currentPage-1)*pageSize;
+    const pagePosts=filtered.slice(start,start+pageSize);
+
+    pagePosts.forEach((p,i)=>{
+        const floorNumber=start+i+1;
+        const level=getLevel(p.points||0);
+
+        const nameHTML = p.op
+            ? `<div class="username">${OP_NAME}</div>`
+            : `<div class="username hidden-name">匿名</div>`;
+
+        const post=document.createElement("div");
+        post.className="post";
+
+        post.innerHTML=`
+            ${nameHTML}
+            <div class="meta-user">
+                积分 ${p.points||0} ｜ ${level} ｜ ${randomIP()}
+            </div>
+            <div class="floor">
+                ${floorNumber}楼 ｜ 发表于 2026-02-11 04:57
+            </div>
+            <div class="content ${p.deleted?'deleted':''}">
+                ${p.deleted?'该帖已被删除':p.content}
+            </div>
+            <div class="actions">
+                ${!p.deleted?'<span onclick="quotePost('+floorNumber+')">引用</span>':''}
+            </div>
+        `;
+        container.appendChild(post);
+    });
+
+    renderPages(totalPages);
+}
+
+function renderPages(total){
+    const bar=document.getElementById("pagebar");
+    bar.innerHTML="";
+    for(let i=1;i<=total;i++){
+        const span=document.createElement("span");
+        span.innerText=i;
+        span.onclick=()=>{currentPage=i;render();};
+        bar.appendChild(span);
+    }
+}
+
+function toggleOP(val=true){
+    onlyOP=val;
+    currentPage=1;
+    render();
+}
+
+function quotePost(floor){
+    const area=document.getElementById("quoteArea");
+    area.innerHTML=`
+    <div class="quote-box">
+    引用 ${floor}楼：
+    <br>（内容略）
+    </div>
+    `;
+}
+
+render();
+</script>
+
+</body>
+</html>
