@@ -4,9 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>橘子小镇论坛</title>
-
 <style>
-body{
+body {
     margin:0;
     font-family:-apple-system,BlinkMacSystemFont,Tahoma,Arial;
     background-image:url("orange.png");
@@ -14,8 +13,7 @@ body{
     background-size:120px;
 }
 
-/* 模拟手机壳 */
-.phone{
+.phone {
     max-width:420px;
     margin:20px auto;
     background:#fffdf8;
@@ -24,8 +22,7 @@ body{
     overflow:hidden;
 }
 
-/* 顶部 */
-.topbar{
+.topbar {
     background:#c58f5c;
     color:white;
     padding:12px;
@@ -34,7 +31,7 @@ body{
     position:relative;
 }
 
-.back-home{
+.back-home {
     position:absolute;
     left:12px;
     cursor:pointer;
@@ -42,7 +39,7 @@ body{
     opacity:0.9;
 }
 
-.thread-title{
+.thread-title {
     padding:14px;
     font-size:15px;
     font-weight:bold;
@@ -50,94 +47,93 @@ body{
     border-bottom:1px solid #eee3d4;
 }
 
-.meta{
+.meta {
     padding:8px 14px;
     font-size:12px;
     color:#8c7c6d;
     border-bottom:1px solid #f0e6d8;
 }
 
-.toolbar{
+.toolbar {
     padding:8px 14px;
     font-size:12px;
     background:#faf6ef;
     border-bottom:1px solid #f0e6d8;
 }
 
-.toolbar span{
+.toolbar span {
     margin-right:12px;
     color:#a05d2c;
     cursor:pointer;
 }
 
-/* 楼层 */
-.post{
+.post {
     padding:12px 14px;
     border-bottom:1px solid #f3eadf;
 }
 
-.username{
+.username {
     font-size:15px;
     font-weight:bold;
     margin-bottom:4px;
 }
 
-.hidden-name{
+.hidden-name {
     visibility:hidden;
     height:16px;
 }
 
-.meta-user{
+.meta-user {
     font-size:13px;
     color:#9c8b7d;
     margin-bottom:6px;
 }
 
-.floor{
+.floor {
     font-size:13px;
     color:#8c7c6d;
     margin-bottom:4px;
 }
 
-.content{
+.content {
     font-size:16px;
     line-height:1.6;
     white-space:normal;
     margin:3px 0 5px 0;
 }
 
-.deleted{
+.deleted {
     color:#b3a79b;
     font-style:italic;
 }
 
-.actions{
+.actions {
     margin-top:4px;
     font-size:12px;
     display:flex;
     justify-content:space-between;
 }
 
-.actions span{
+.actions span {
     margin-right:10px;
     color:#a05d2c;
     cursor:pointer;
 }
 
-.pagebar{
+.pagebar {
     padding:10px 14px;
     text-align:center;
     font-size:12px;
     background:#faf6ef;
 }
 
-.pagebar span{
+.pagebar span {
     margin:0 6px;
     cursor:pointer;
     color:#a05d2c;
 }
 
-.quote-box{
+.quote-box {
     padding:10px 14px;
     background:#fff3df;
     border-top:1px solid #e6d6bf;
@@ -145,7 +141,6 @@ body{
 }
 </style>
 </head>
-
 <body>
 
 <div class="phone">
@@ -156,7 +151,7 @@ body{
 </div>
 
 <div class="thread-title">
-「求助」我的狗总是对邻居的狗进行骑跨行为，对方主人每次都吓得尖叫，我该怎么道歉？
+「求助」我的狗总是对邻居的狗进行骑跨行为，对方主人每次都尖叫，我该怎么道歉？
 </div>
 
 <div class="meta">
@@ -173,13 +168,13 @@ body{
 <div id="quoteArea"></div>
 
 </div>
-    
+
 <script>
 let currentPage = 1;
-const pageSize = 6; // 每页显示条数
+const pageSize = 6;
 let onlyOP = false;
 const OP_NAME = "我家狗狗可爱";
-let postsData = []; // 当前页数据或累积数据
+let postsData = [];
 
 function getLevel(points){
     if(points>2000) return "资深居民";
@@ -193,7 +188,12 @@ function randomIP(){
 }
 
 function goHome(){ window.location.href="home.html"; }
-function toggleOP(val=true){ onlyOP=val; render(postsData); }
+
+function toggleOP(val=true){ 
+    onlyOP=val; 
+    render(postsData); 
+}
+
 function quotePost(floor){
     document.getElementById("quoteArea").innerHTML=`
     <div class="quote-box">
@@ -202,31 +202,31 @@ function quotePost(floor){
     </div>`;
 }
 
-/* 动态加载分页 JS 文件 */
+/* 动态加载分页文件 */
 function loadPage(page){
     currentPage = page;
-
     const oldScript = document.getElementById("pageScript");
     if(oldScript) oldScript.remove();
 
     const script = document.createElement("script");
     script.id = "pageScript";
-    script.src = "page" + page + ".js?"+Date.now(); // 防止缓存
+    script.src = "page" + page + ".js?"+Date.now(); 
     document.body.appendChild(script);
 }
 
-/* 渲染当前页数据 */
+/* 渲染页面数据 */
 function render(data){
     postsData = data;
     const container = document.getElementById("posts");
     container.innerHTML = "";
 
     const filtered = onlyOP ? postsData.filter(p=>p.name===OP_NAME) : postsData;
-    const start = (currentPage-1) * pageSize;
+    const start = (currentPage-1)*pageSize;
+    const pagePosts = filtered.slice(0, pageSize); // 每页显示
 
-    filtered.forEach((p,i)=>{
+    pagePosts.forEach((p,i)=>{
         const floorNumber = start + i + 1;
-        const isOP = p.name===OP_NAME;
+        const isOP = p.name === OP_NAME;
         const nameHTML = `<div class="username">${p.name || '匿名'}${isOP?'（楼主）':''}</div>`;
 
         const post = document.createElement("div");
@@ -270,7 +270,6 @@ function renderPages(totalItems){
 /* 初始加载第一页 */
 loadPage(1);
 </script>
-
 
 </body>
 </html>
