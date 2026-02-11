@@ -1,190 +1,10 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>橘子小镇论坛</title>
-
-<style>
-body{
-    margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,Tahoma,Arial;
-    background-image:url("orange.png");
-    background-repeat:repeat;
-    background-size:120px;
-}
-
-
-/* 模拟手机壳 */
-.phone{
-    max-width:420px;
-    margin:20px auto;
-    background:#fffdf8;
-    border-radius:18px;
-    box-shadow:0 8px 30px rgba(0,0,0,0.08);
-    overflow:hidden;
-}
-
-/* 顶部 */
-.topbar{
-    background:#c58f5c;
-    color:white;
-    padding:12px;
-    font-size:15px;
-    text-align:center;
-    position:relative;
-}
-
-.back-home{
-    position:absolute;
-    left:12px;
-    cursor:pointer;
-    font-size:13px;
-    opacity:0.9;
-}
-
-.thread-title{
-    padding:14px;
-    font-size:15px;
-    font-weight:bold;
-    background:#f6efe5;
-    border-bottom:1px solid #eee3d4;
-}
-
-.meta{
-    padding:8px 14px;
-    font-size:12px;
-    color:#8c7c6d;
-    border-bottom:1px solid #f0e6d8;
-}
-
-.toolbar{
-    padding:8px 14px;
-    font-size:12px;
-    background:#faf6ef;
-    border-bottom:1px solid #f0e6d8;
-}
-
-.toolbar span{
-    margin-right:12px;
-    color:#a05d2c;
-    cursor:pointer;
-}
-
-/* 楼层 */
-.post{
-    padding:12px 14px;
-    border-bottom:1px solid #f3eadf;
-}
-
-.username{
-    font-size:15px;
-    font-weight:bold;
-    margin-bottom:4px;
-}
-
-.hidden-name{
-    visibility:hidden;
-    height:16px;
-}
-
-.meta-user{
-    font-size:13px;
-    color:#9c8b7d;
-    margin-bottom:6px;
-}
-
-.floor{
-    font-size:13px;
-    color:#8c7c6d;
-    margin-bottom:4px;
-}
-
-.content{
-    font-size:16px;
-    line-height:1.6;
-    white-space:normal;
-    margin:3px 0 5px 0;
-}
-
-.deleted{
-    color:#b3a79b;
-    font-style:italic;
-}
-
-.actions{
-    margin-top:4px;
-    font-size:12px;
-    display:flex;
-    justify-content:space-between;
-}
-
-.actions span{
-    margin-right:10px;
-    color:#a05d2c;
-    cursor:pointer;
-}
-
-.pagebar{
-    padding:10px 14px;
-    text-align:center;
-    font-size:12px;
-    background:#faf6ef;
-}
-
-.pagebar span{
-    margin:0 6px;
-    cursor:pointer;
-    color:#a05d2c;
-}
-
-.quote-box{
-    padding:10px 14px;
-    background:#fff3df;
-    border-top:1px solid #e6d6bf;
-    font-size:13px;
-}
-</style>
-</head>
-
-<body>
-
-<div class="phone">
-
-<div class="topbar">
-    <span class="back-home" onclick="goHome()">← 论坛主页</span>
-    橘子小镇论坛
-</div>
-
-
-<div class="thread-title">
-「求助」我的狗总是对邻居的狗进行骑跨行为，对方主人每次都吓得尖叫，我该怎么道歉？
-</div>
-
-<div class="meta">
-浏览量：1843 ｜ 回复：62
-</div>
-
-<div class="toolbar">
-<span onclick="toggleOP()">只看楼主</span>
-<span onclick="toggleOP(false)">全部</span>
-</div>
-
-<div id="posts"></div>
-<div class="pagebar" id="pagebar"></div>
-<div id="quoteArea"></div>
-
-</div>
-
 <script>
-let currentPage=1;
-let onlyOP=false;
-const OP_NAME="我家狗狗可爱";
+let currentPage = 1;
+const pageSize = 6; // 每页显示条数
+let onlyOP = false;
+const OP_NAME = "我家狗狗可爱";
+let postsData = []; // 当前页数据或累积数据
 
-/* 当前页数据 */
-let postsData=[];
-
-/* 等级 */
 function getLevel(points){
     if(points>2000) return "资深居民";
     if(points>1000) return "常驻居民";
@@ -196,126 +16,81 @@ function randomIP(){
     return "IP: 192.168."+Math.floor(Math.random()*255)+"."+Math.floor(Math.random()*255);
 }
 
-/* 加载分页文件 */
+function goHome(){ window.location.href="home.html"; }
+function toggleOP(val=true){ onlyOP=val; render(postsData); }
+function quotePost(floor){
+    document.getElementById("quoteArea").innerHTML=`
+    <div class="quote-box">
+    引用 ${floor}楼：
+    <br>（内容略）
+    </div>`;
+}
+
+/* 动态加载分页 JS 文件 */
 function loadPage(page){
-    currentPage=page;
+    currentPage = page;
 
-    const old=document.getElementById("pageScript");
-    if(old) old.remove();
+    const oldScript = document.getElementById("pageScript");
+    if(oldScript) oldScript.remove();
 
-    const script=document.createElement("script");
-    script.src="page"+page+".js?"+Date.now();
-    script.id="pageScript";
+    const script = document.createElement("script");
+    script.id = "pageScript";
+    script.src = "page" + page + ".js?"+Date.now(); // 防止缓存
     document.body.appendChild(script);
 }
 
-/* render 可以接收数组并分页显示 */
-function render(data) {
+/* 渲染当前页数据 */
+function render(data){
     postsData = data;
-
     const container = document.getElementById("posts");
     container.innerHTML = "";
 
-    // 筛选楼主或全部
-    let filtered = onlyOP ? postsData.filter(p => p.name === OP_NAME) : postsData;
+    const filtered = onlyOP ? postsData.filter(p=>p.name===OP_NAME) : postsData;
+    const start = (currentPage-1) * pageSize;
 
-    // 当前页起始索引
-    const start = (currentPage - 1) * pageSize;
-    const pagePosts = filtered.slice(start, start + pageSize);
-
-    pagePosts.forEach((p, i) => {
+    filtered.forEach((p,i)=>{
         const floorNumber = start + i + 1;
-        const level = getLevel(p.points || 0);
-        const isOP = p.name === OP_NAME;
-
-        const nameHTML = `<div class="username">
-                ${p.name || '匿名'}
-                ${isOP ? '（楼主）' : ''}
-        </div>`;
+        const isOP = p.name===OP_NAME;
+        const nameHTML = `<div class="username">${p.name || '匿名'}${isOP?'（楼主）':''}</div>`;
 
         const post = document.createElement("div");
         post.className = "post";
-
         post.innerHTML = `
             ${nameHTML}
             <div class="meta-user">
-                积分 ${p.points || 0} ｜ ${level} ｜ ${randomIP()}
+                积分 ${p.points||0} ｜ ${getLevel(p.points||0)} ｜ ${randomIP()}
             </div>
             <div class="floor">
                 ${floorNumber}楼 ｜ 发表于 ${p.time}
             </div>
-            <div class="content ${p.deleted ? 'deleted' : ''}">
-               ${p.deleted ? '该帖已被删除' : p.content.replace(/\n/g, '<br>')}
+            <div class="content ${p.deleted?'deleted':''}">
+                ${p.deleted?'该帖已被删除':p.content.replace(/\n/g,'<br>')}
             </div>
             <div class="actions">
-               ${!p.deleted ? `
-                   <span onclick="quotePost(${floorNumber})">引用</span>
-                   <span style="color:#b5a79a;">举报</span>
-               ` : ''}
+                ${!p.deleted?`<span onclick="quotePost(${floorNumber})">引用</span>
+                <span style="color:#b5a79a;">举报</span>`:''}
             </div>
         `;
-
         container.appendChild(post);
     });
 
     renderPages(filtered.length);
 }
 
-/* 分页条渲染 */
-function renderPages(totalItems) {
+/* 分页条 */
+function renderPages(totalItems){
     const bar = document.getElementById("pagebar");
     bar.innerHTML = "";
-
-    const totalPages = Math.ceil(totalItems / pageSize);
-
-    for (let i = 1; i <= totalPages; i++) {
+    const totalPages = Math.ceil(totalItems/pageSize);
+    for(let i=1;i<=totalPages;i++){
         const span = document.createElement("span");
         span.innerText = i;
-        if (i === currentPage) span.style.fontWeight = "bold";
-        span.onclick = () => {
-            currentPage = i;
-            render(postsData);
-        };
-        bar.appendChild(span);
-    }
-}
-
-
-function renderPages(){
-    const bar=document.getElementById("pagebar");
-    bar.innerHTML="";
-    for(let i=1;i<=3;i++){
-        const span=document.createElement("span");
-        span.innerText=i;
         if(i===currentPage) span.style.fontWeight="bold";
-        span.onclick=()=>{loadPage(i);};
+        span.onclick = ()=>{ loadPage(i); };
         bar.appendChild(span);
     }
-}
-/* 返回键 */
-function goHome(){
-    window.location.href="home.html";
-}
-
-function toggleOP(val=true){
-    onlyOP=val;
-    render(postsData);
-}
-
-function quotePost(floor){
-    const area=document.getElementById("quoteArea");
-    area.innerHTML=`
-    <div class="quote-box">
-    引用 ${floor}楼：
-    <br>（内容略）
-    </div>
-    `;
 }
 
 /* 初始加载第一页 */
 loadPage(1);
 </script>
-
-
-</body>
-</html>
