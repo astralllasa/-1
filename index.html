@@ -1,3 +1,4 @@
+html
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -14,13 +15,19 @@
     .toolbar{ padding:8px 14px; font-size:12px; background:#faf6ef; border-bottom:1px solid #f0e6d8; display: flex; gap: 15px; }
     .toolbar span{ color:#a05d2c; cursor:pointer; padding: 2px 6px; border-radius: 4px; }
     .toolbar span.active { background: #e6d6bf; font-weight: bold; }
-    
-    /* 楼层样式 */
-    .post{ padding:15px; border-bottom:1px solid #f3eadf; }
-    .username{ font-size:13px; font-weight:bold; color: #4a3c2e; margin-bottom:4px; }
+    .post{ padding:12px 14px; border-bottom:1px solid #f3eadf; }
+    .username{ font-size:13px; font-weight:bold; margin-bottom:4px; color: #4a3c2e; }
     .meta-user{ font-size:11px; color:#9c8b7d; margin-bottom:6px; }
     .floor{ font-size:12px; color:#8c7c6d; margin-bottom:4px; font-family: Georgia, serif; }
-
+    .content{ font-size:14px; line-height:1.6; color: #333; margin:3px 0 5px 0; word-wrap: break-word; }
+    .deleted{ color:#b3a79b; font-style:italic; }
+    .actions{ margin-top:4px; font-size:12px; display:flex; justify-content:flex-end; }
+    .actions span{ margin-left:15px; color:#a05d2c; cursor:pointer; }
+    .pagebar{ padding:15px 14px; text-align:center; font-size:13px; background:#faf6ef; border-top: 1px solid #eee; }
+    .pagebar span{ margin:0 8px; cursor:pointer; color:#a05d2c; padding: 4px 8px; }
+    .pagebar span.current { font-weight:bold; text-decoration: underline; color: #6d3a15; }
+    .quote-box{ padding:10px 14px; background:#fff3df; border-top:1px solid #e6d6bf; font-size:13px; color: #7d664a; }
+    
     /* --- 论坛回帖引用样式 --- */
     .bbs-quote {
         background: #f1e9db;
@@ -41,13 +48,6 @@
     .quote-content { line-height: 1.5; font-style: italic; }
 
     .content{ font-size:14.5px; line-height:1.7; color: #333; margin:3px 0 5px 0; word-wrap: break-word; white-space: pre-wrap; }
-    
-    /* --- 底部数字页码样式 --- */
-    .pagebar{ padding:15px 14px; text-align:center; font-size:13px; background:#faf6ef; border-top: 1px solid #eee; }
-    .pagebar span{ margin:0 8px; cursor:pointer; color:#a05d2c; padding: 4px 8px; }
-    .pagebar span.current { font-weight:bold; text-decoration: underline; color: #6d3a15; }
-    
-    .quote-box{ padding:10px 14px; background:#fff3df; border-top:1px solid #e6d6bf; font-size:13px; color: #7d664a; }
 </style>
 </head>
 <body>
@@ -73,6 +73,7 @@
     <div class="pagebar" id="pagebar"></div>
     <div id="quoteArea"></div>
 </div>
+
 
 <script>
 let currentPage = 1;
