@@ -209,54 +209,77 @@ function loadPage(page){
     document.body.appendChild(script);
 }
 
-/* 现在 render 可以接收数组 */
-function render(data){
-    postsData=data;
+/* render 可以接收数组并分页显示 */
+function render(data) {
+    postsData = data;
 
-    const container=document.getElementById("posts");
-    container.innerHTML="";
+    const container = document.getElementById("posts");
+    container.innerHTML = "";
 
-    let filtered=onlyOP?postsData.filter(p=>p.name===OP_NAME):postsData;
+    // 筛选楼主或全部
+    let filtered = onlyOP ? postsData.filter(p => p.name === OP_NAME) : postsData;
 
-    filtered.forEach((p,i)=>{
-        const start = (currentPage - 1) * pageSize;
-				filtered.forEach((p,i)=>{
-    			const floorNumber = start + i + 1;
-        const level=getLevel(p.points||0);
-        const isOP=p.name===OP_NAME;
+    // 当前页起始索引
+    const start = (currentPage - 1) * pageSize;
+    const pagePosts = filtered.slice(start, start + pageSize);
+
+    pagePosts.forEach((p, i) => {
+        const floorNumber = start + i + 1;
+        const level = getLevel(p.points || 0);
+        const isOP = p.name === OP_NAME;
 
         const nameHTML = `<div class="username">
                 ${p.name || '匿名'}
                 ${isOP ? '（楼主）' : ''}
         </div>`;
 
-        const post=document.createElement("div");
-        post.className="post";
+        const post = document.createElement("div");
+        post.className = "post";
 
-        post.innerHTML=`
+        post.innerHTML = `
             ${nameHTML}
             <div class="meta-user">
-                积分 ${p.points||0} ｜ ${level} ｜ ${randomIP()}
+                积分 ${p.points || 0} ｜ ${level} ｜ ${randomIP()}
             </div>
             <div class="floor">
                 ${floorNumber}楼 ｜ 发表于 ${p.time}
             </div>
-            <div class="content ${p.deleted?'deleted':''}">
-               ${p.deleted?'该帖已被删除':p.content.replace(/\n/g,'<br>')}
+            <div class="content ${p.deleted ? 'deleted' : ''}">
+               ${p.deleted ? '该帖已被删除' : p.content.replace(/\n/g, '<br>')}
             </div>
             <div class="actions">
-   		 ${!p.deleted?`
-       		 <span onclick="quotePost(${floorNumber})">引用</span>
-       		 <span style="color:#b5a79a;">举报</span>
-   		 `:''}
-	</div>
-
+               ${!p.deleted ? `
+                   <span onclick="quotePost(${floorNumber})">引用</span>
+                   <span style="color:#b5a79a;">举报</span>
+               ` : ''}
+            </div>
         `;
+
         container.appendChild(post);
     });
 
-    renderPages();
+    renderPages(filtered.length);
 }
+
+/* 分页条渲染 */
+function renderPages(totalItems) {
+    const bar = document.getElementById("pagebar");
+    bar.innerHTML = "";
+
+    const totalPages = Math.ceil(totalItems / pageSize);
+
+    for (let i = 1; i <= totalPages; i++) {
+        const span = document.createElement("span");
+        span.innerText = i;
+        if (i === currentPage) span.style.fontWeight = "bold";
+        span.onclick = () => {
+            currentPage = i;
+            render(postsData);
+        };
+        bar.appendChild(span);
+    }
+}
+
 
 function renderPages(){
     const bar=document.getElementById("pagebar");
