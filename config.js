@@ -12,7 +12,7 @@ window.forumConfig = {
         title: "「求助」我的狗总是对邻居的狗进行骑跨行为，对方主人每次都吓得尖叫，我该怎么道歉？",
         opName: "我家狗狗可爱",
         totalPages: 8,
-        replyCount: 267,
+        replyCount: 272,
         isLocked: true
     }, // 逗号不能忘
 
@@ -21,7 +21,7 @@ window.forumConfig = {
         title: "怎么才能在有好感的人面前停止发疯",
         opName: "混吃等死123",
         totalPages: 1,
-        replyCount: 12,
+        replyCount: 14,
         isLocked: true
     },
 
