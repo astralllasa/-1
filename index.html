@@ -211,6 +211,31 @@
         transform: scale(1.1); /* 稍微变大 */
         box-shadow: 0 4px 8px rgba(197, 143, 92, 0.3);
     }
+    
+        /* === 📱 手机端专属优化：保留一点点缝隙 === */
+    @media screen and (max-width: 480px) {
+        .phone {
+            /* 1. 宽度设为 94%，这样左右各留 3% 的缝隙露出背景 */
+            width: 94%; 
+            
+            /* 2. 上下左右留一点距离，而不是顶满屏幕 */
+            margin: 12px auto; 
+            
+            /* 3. 手机屏幕小，圆角稍微改小一点点，看起来更协调，也不容易切掉字 */
+            border-radius: 16px;
+            
+            /* 4. 保证高度合适，底部留点空隙，看起来悬浮感更好 */
+            min-height: calc(100vh - 24px); 
+        }
+
+        /* 5. 稍微调整一下字体，手机上看着更舒服 */
+        .content {
+            font-size: 15px;
+            padding-left: 5px;  /* 微调内边距 */
+            padding-right: 5px;
+        }
+    }
+
 </style>
 
 
