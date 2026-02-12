@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍊砂糖橘万事屋🍊论坛 - 帖子详情</title>
+<!-- 1. 先引入配置文件 -->
+<script src="config.js"></script> 
+<style>
+    /* === 全局：保留暖色调，背景加一点点圆点纹理 === */
+    body { 
+        margin: 0; 
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif; 
+        background-color: #fdf6ec;
+        /* 背景改成圆点阵列，比方格更圆润 */
+        background-image: radial-gradient(#e6d6bf 2px, transparent 2px);
+        background-size: 20px 20px;
+    }
+
+    /* === 主容器：超大圆角 === */
+    .phone { 
+        max-width: 420px; 
+        margin: 20px auto; 
+        background: #fefaf6; 
+        /* 像一块圆润的香皂 */
+        border-radius: 24px; 
+        box-shadow: 
+            0 0 0 2px #e6d6bf, /* 外圈细线 */
+            0 10px 20px rgba(197, 143, 92, 0.2); /* 柔和投影 */
+        overflow: hidden; 
+        min-height: 90vh; 
+    }
+
+    /* === 顶部栏：圆润的头部 === */
+    .topbar { 
+        background: #c58f5c; 
+        color: white; 
+        padding: 15px; 
+        font-size: 15px; 
+        text-align: center; 
+        position: relative; 
+        font-weight: bold;
+        letter-spacing: 1px;
+        
+    }
+    
+    /* 返回按钮：胶囊形状 */
+    .back-home { 
+        position: absolute; 
+        left: 15px; 
+        top: 14px;
+        cursor: pointer; 
+        font-size: 12px; 
+        background: rgba(255,255,255,0.2); /* 半透明 */
+        padding: 4px 12px;
+        border-radius: 10px; /* 胶囊圆角 */
+        border: 1px solid rgba(255,255,255,0.5);
+        transition: 0.2s;
+    }
+    .back-home:hover { background: #fff; color: #c58f5c; }
+
+    /* === 标题区：虚线分割 === */
+    .thread-title { 
+        padding: 18px; 
+        font-size: 16px; 
+        font-weight: bold; 
+        background: #fff; 
+        color: #5a4a3a; 
+        line-height: 1.5;
+        /* 底部用虚线，像撕下来的票据 */
+        border-bottom: 2px dashed #e6d6bf;
+    }
+
+    /* === 数据栏 === */
+    .meta { 
+        padding: 10px 18px; 
+        font-size: 11px; 
+        color: #a05d2c; 
+        border-bottom: 1px solid #f6efe5; 
+        background: #fffcf8;
+    }
+
+    /* === 工具栏：气泡按钮 === */
+    .toolbar { 
+        padding: 12px; 
+        background: #fffcf8; 
+        border-bottom: 1px solid #f0e6d8; 
+        display: flex; 
+        justify-content: left; /* 左对齐 */
+        gap: 15px; 
+    }
+    .toolbar span { 
+        color: #8c7c6d; 
+        cursor: pointer; 
+        padding: 5px 15px; 
+        border-radius: 5px; /* 圆润 */
+        background: #f0e6d8;
+        font-size: 12px;
+        transition: all 0.2s;
+    }
+    .toolbar span.active { 
+        background: #c58f5c; 
+        color: #fff; 
+        font-weight: bold; 
+        box-shadow: 0 4px 10px rgba(197, 143, 92, 0.3); /* 柔和发光 */
+    }
+
+        /* === 跑马灯容器 === */
+    .marquee-wrapper {
+        background: #fff8e1; /* 暖黄便签纸色，配合你的主题 */
+        color: #a05d2c;      /* 焦糖色文字 */
+        font-family: "Courier New", monospace; /* 复古打印机字体 */
+        font-size: 12px;
+        padding: 6px 0;
+        border-bottom: 2px dashed #e6d6bf; /* 虚线分割 */
+        overflow: hidden;    /* 必须：隐藏超出部分 */
+        white-space: nowrap; /* 必须：强制不换行 */
+    }
+
+    /* === 跑马灯内容动画 === */
+    .marquee-content {
+        display: inline-block;
+        padding-left: 100%;  /* 从最右边开始 */
+        animation: marquee 15s linear infinite; /* 15秒循环一次 */
+    }
+
+    /* === 动画关键帧 (必须加这个，不然不动) === */
+    @keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-100%); }
+    }
+
+
+    /* === 帖子内容 === */
+    .post { 
+        padding: 20px 18px; 
+        border-bottom: 1px dashed #e0d0c0; /* 柔和虚线 */
+    }
+    
+    .username { 
+        font-size: 14px; 
+        font-weight: bold; 
+        margin-bottom: 6px; 
+        color: #4a3c2e; 
+    }
+    /* 楼主标签：圆角 */
+    .username span { 
+        background: #ffebd7; /* 浅橘粉色 */
+        color: #c3806b !important; 
+        padding: 2px 8px; 
+        font-size: 11px !important; 
+        border-radius: 0px; 
+        margin-left: 5px;
+    }
+
+    .meta-user { font-size: 11px; color: #bcaaa4; margin-bottom: 8px; }
+    .floor { font-size: 12px; color: #c58f5c; margin-bottom: 4px; }
+
+    /* 正文：保持你的易读性 */
+    .content { 
+        font-size: 15px; 
+        line-height: 1.7; 
+        color: #333; 
+        margin-top: 5px; 
+        word-wrap: break-word; 
+    }
+
+    /* === 引用块：圆角卡片 === */
+    .bbs-quote { 
+        background: #fff8e1; /* 暖黄便签纸 */
+        border: none;
+        border-left: 4px solid #cfa291; /* 左侧圆头线条 */
+        border-radius: 5px; /* 圆润 */
+        padding: 12px; 
+        margin: 12px 0; 
+        font-size: 12px; 
+        color: #795548; 
+    }
+    .quote-header { 
+        border-bottom: 1px dashed #ffe082; 
+        margin-bottom: 6px; 
+        padding-bottom: 4px; 
+        font-weight: bold; 
+    }
+
+    /* === 翻页条：圆点按钮 === */
+    .pagebar { 
+        padding: 20px; 
+        text-align: center; 
+        background: #fffcf8; 
+        border-top: 1px dashed #e6d6bf;
+    }
+    .pagebar span { 
+        display: inline-block;
+        min-width: 28px;
+        height: 28px;
+        line-height: 28px;
+        margin: 0 4px; 
+        cursor: pointer; 
+        border-radius: 50%; /* 完全圆形 */
+        background: #fff;
+        color: #8c7c6d;
+        font-size: 12px;
+        border: 1px solid #e6d6bf;
+        transition: 0.2s;
+    }
+    .pagebar span.current { 
+        background: #c58f5c; 
+        color: #fff; 
+        border-color: #c58f5c;
+        transform: scale(1.1); /* 稍微变大 */
+        box-shadow: 0 4px 8px rgba(197, 143, 92, 0.3);
+    }
+</style>
+
+
+</head>
+<body>
+
+<div class="phone">
+    <div class="topbar">
+        <!-- 这里加一个返回列表的逻辑，稍后可以用 list.html 替代 -->
+        <span class="back-home" onclick="window.location.href='list.html'">← 帖子列表</span>
+        🍊砂糖橘万事屋🍊
+    </div>
+
+     <div class="marquee-wrapper">
+        <div class="marquee-content">
+            *** 欢迎来到砂糖橘万事屋 *** 文明上网，理性发帖 *** 这里的早餐很好吃 *** (｡♥‿♥｡)
+        </div>
+    </div>
+
+    <!-- 标题不再硬编码，而是留空等待 JS 填充 -->
+    <div class="thread-title" id="uiTitle">加载中...</div>
+
+    <div class="meta">浏览量：1843 ｜ 收藏：62</div>
+
+    <div class="toolbar">
+        <span id="btnAll" class="active" onclick="toggleOP(false)">全部内容</span>
+        <span id="btnOP" onclick="toggleOP(true)">只看楼主</span>
+    </div>
+
+    <div id="posts"></div>
+    <div class="pagebar" id="pagebar"></div>
+    <div id="quoteArea"></div>
+</div>
+
+
+<script>
+// 1. 获取 URL 参数中的 id
+const params = new URLSearchParams(window.location.search);
+// 默认加载 dog_issue，如果 URL 里没写 id
+const currentThreadId = params.get('id') || 'dog_issue'; 
+
+// 2. 从 config.js 中读取当前帖子的信息
+// 如果 config 没加载或者 ID 不存在，给一个默认值防止报错
+const threadInfo = (window.forumConfig && window.forumConfig[currentThreadId]) ? window.forumConfig[currentThreadId] : {
+    title: "帖子不存在或 Config 文件缺失",
+    opName: "",
+    totalPages: 0
+};
+
+// 3. 更新界面上的标题和楼主设置
+document.getElementById("uiTitle").innerText = threadInfo.title;
+document.title = "橘子小镇 - " + threadInfo.title;
+
+let currentPage = 1;
+const OP_NAME = threadInfo.opName; // 使用配置里的楼主名
+let onlyOP = false;
+let allPostsData = {}; 
+
+function getLevel(points){
+    if(points > 2000) return "资深居民";
+    if(points > 1000) return "常驻居民";
+    if(points > 300) return "小镇居民";
+    return "新居民";
+}
+
+function randomIP(seed) {
+    return "IP: 114.242." + (seed % 255) + "." + (Math.floor(seed * 1.5) % 255);
+}
+
+function loadPage(page){
+    currentPage = page;
+    const old = document.getElementById("pageScript");
+    if(old) old.remove();
+    
+    if(allPostsData[page]) {
+        renderPosts();
+        renderPages();
+    } else {
+        const script = document.createElement("script");
+        // 4. 关键修改：文件名加上了帖子 ID 前缀
+        // 例如加载 dog_issue 的第 1 页 -> dog_issue_page1.js
+        script.src = `${currentThreadId}_page${page}.js?v=${Date.now()}`;
+        
+        script.id = "pageScript";
+        // 增加错误处理，如果文件不存在
+        script.onerror = function() {
+            alert("无法加载数据，请检查文件名是否为: " + currentThreadId + "_page" + page + ".js");
+        };
+        document.body.appendChild(script);
+    }
+}
+
+function render(data, page){
+    allPostsData[page] = data;
+    renderPosts();
+    renderPages();
+}
+
+function renderPosts(){
+    const container = document.getElementById("posts");
+    container.innerHTML = "";
+    const pageData = allPostsData[currentPage] || [];
+    
+    // 计算楼层偏移量
+    let globalOffset = 0;
+    for(let i = 1; i < currentPage; i++) {
+        if(allPostsData[i]) globalOffset += allPostsData[i].length;
+    }
+
+    // 循环渲染每一条帖子
+    pageData.forEach((p, index) => {
+        const floor = globalOffset + index + 1;
+        
+        // 如果开启了“只看楼主”，且当前发言人不是楼主，则跳过
+        if(onlyOP && p.name !== OP_NAME) return;
+
+        // --- ↓↓↓ 这里是之前被省略掉的核心代码，现在补回来了 ↓↓↓ ---
+        
+        // 1. 处理引用回复
+        let quoteHTML = "";
+        if (p.quoteUser && p.quoteContent) {
+            quoteHTML = `
+                <div class="bbs-quote">
+                    <div class="quote-header">引用 ${p.quoteFloor || '?'} 楼 @${p.quoteUser} 的发言:</div>
+                    <div class="quote-content">${p.quoteContent}</div>
+                </div>`;
+        }
+
+        // 2. 创建帖子 DIV
+        const postDiv = document.createElement("div");
+        postDiv.className = "post";
+        
+        // 3. 填充 HTML 内容
+        postDiv.innerHTML = `
+            <div class="username">${p.name} ${p.name===OP_NAME ? '<span style="color:#c58f5c;font-size:11px;">[楼主]</span>' : ''}</div>
+            <div class="meta-user">积分 ${p.points || 0} ｜ ${getLevel(p.points || 0)} ｜ ${randomIP(floor)}</div>
+            <div class="floor">${floor}楼 ｜ 发表于 ${p.time}</div>
+            ${quoteHTML}
+            <div class="content">${p.content.replace(/\n/g,"<br>")}</div>
+        `;
+        
+        // --- ↑↑↑ 补回的代码结束 ↑↑↑ ---
+
+        // 将帖子加入容器
+        container.appendChild(postDiv);
+    });
+
+    // ==========================================
+    // ★★★ 锁帖提示逻辑 (自动判断最后一页) ★★★
+    // ==========================================
+    if (threadInfo.isLocked && currentPage === threadInfo.totalPages && !onlyOP) {
+        const lockDiv = document.createElement('div');
+        Object.assign(lockDiv.style, {
+            backgroundColor: '#fff5f5', // 很浅的粉色
+            border: '2px solid #ffcdd2', // 柔和的粉红边框
+            color: '#e57373', // 柔和的红色文字
+            padding: '12px 20px',
+            margin: '30px auto',
+            textAlign: 'center',
+            borderRadius: '25px', // ★★★ 重点：胶囊形状 ★★★
+            fontSize: '13px',
+            fontWeight: 'bold',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '8px',
+            width: '80%',
+            maxWidth: '600px',
+            boxShadow: '0 4px 10px rgba(255, 205, 210, 0.5)' // 柔和的粉色光晕
+        });
+        
+        lockDiv.innerHTML = `
+            <span style="font-size:16px;">🔒</span>
+            <span>此贴已被楼主锁定</span>`;
+        container.appendChild(lockDiv);
+    }
+    
+    // 滚回顶部
+    window.scrollTo(0,0);
+}
+
+
+function renderPages(){
+    const bar = document.getElementById("pagebar");
+    bar.innerHTML = "";
+    // 5. 关键修改：使用配置里的总页数，而不是硬编码的 6
+    const totalPages = threadInfo.totalPages; 
+
+    for(let i = 1; i <= totalPages; i++){
+        const span = document.createElement("span");
+        span.innerText = i;
+        if(i === currentPage) span.className = "current";
+        span.onclick = () => loadPage(i);
+        bar.appendChild(span);
+    }
+}
+
+function toggleOP(val){
+    onlyOP = val;
+    document.getElementById("btnOP").className = val ? "active" : "";
+    document.getElementById("btnAll").className = val ? "" : "active";
+    renderPosts();
+}
+
+// 启动
+if(threadInfo.totalPages > 0) {
+    loadPage(1);
+} else {
+    document.getElementById("posts").innerHTML = "<div style='padding:20px;text-align:center'>帖子不存在</div>";
+}
+</script>
+
+</body>
+</html>
