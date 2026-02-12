@@ -147,12 +147,56 @@
         margin: 2px auto 0;
     }
 
-    .empty-tip { text-align: center; padding: 40px; color: #b3a79b; font-size: 14px; }
-    
-    /* === 滚动条美化 === */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #e6d6bf; border-radius: 3px; }
+        /* === 跑马灯容器 === */
+    .marquee-wrapper {
+        background: #f1d67e; /* 暖黄便签纸色，配合你的主题 */
+        color: #a05d2c;      /* 焦糖色文字 */
+        font-family: "Courier New", monospace; /* 复古打印机字体 */
+        font-size: 12px;
+        padding: 6px 0;
+        border-bottom: 2px dashed #e6d6bf; /* 虚线分割 */
+        overflow: hidden;    /* 必须：隐藏超出部分 */
+        white-space: nowrap; /* 必须：强制不换行 */
+    }
+
+    /* === 跑马灯内容动画 === */
+    .marquee-content {
+        display: inline-block;
+        padding-left: 100%;  /* 从最右边开始 */
+        animation: marquee 15s linear infinite; /* 15秒循环一次 */
+    }
+
+    /* === 动画关键帧 (必须加这个，不然不动) === */
+    @keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-100%); }
+    }
+
+
+        /* === 📱 手机端专属优化：保留一点点缝隙 === */
+    @media screen and (max-width: 480px) {
+        .phone {
+            /* 1. 宽度设为 94%，这样左右各留 3% 的缝隙露出背景 */
+            width: 94%; 
+            
+            /* 2. 上下左右留一点距离，而不是顶满屏幕 */
+            margin: 12px auto; 
+            
+            /* 3. 手机屏幕小，圆角稍微改小一点点，看起来更协调，也不容易切掉字 */
+            border-radius: 16px;
+            
+            /* 4. 保证高度合适，底部留点空隙，看起来悬浮感更好 */
+            min-height: calc(100vh - 24px); 
+        }
+
+        /* 5. 稍微调整一下字体，手机上看着更舒服 */
+        .content {
+            font-size: 15px;
+            padding-left: 5px;  /* 微调内边距 */
+            padding-right: 5px;
+        }
+    }
+
 </style>
 
 </head>
@@ -160,6 +204,11 @@
 
 <div class="phone">
     <div class="topbar">🍊砂糖橘万事屋🍊 <span class="top-icon" onclick="location.reload()">↻ 刷新</span></div>
+    <div class="marquee-wrapper">
+        <div class="marquee-content">
+           *** 🍊欢迎来到砂糖橘万事屋🍊 *** 🍊万事大吉🍊 *** 🍊请仔细阅读版规哦🍊 ***
+        </div>
+    </div>
     <div class="list-container" id="threadList"><div class="empty-tip">正在读取...</div></div>
     <div class="bottom-menu">
         <div class="menu-item active">

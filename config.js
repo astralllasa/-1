@@ -21,7 +21,7 @@ window.forumConfig = {
         title: "怎么才能在有好感的人面前停止发疯",
         opName: "混吃等死123",
         totalPages: 1,
-        replyCount: 12,
+        replyCount: 13,
         isLocked: true
     },
 
@@ -37,6 +37,7 @@ window.forumConfig = {
         title: " 太好了我磕的cp是真的…",
         opName: "鱼丸火锅",
         totalPages: 1,
+        replyCount: 21499,
     },
     
     "fake1": {
