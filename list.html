@@ -173,29 +173,44 @@
     }
 
 
-        /* === 📱 手机端专属优化：保留一点点缝隙 === */
+          /* === 📱 手机端专属优化（最终修正版） === */
     @media screen and (max-width: 480px) {
         .phone {
-            /* 1. 宽度设为 94%，这样左右各留 3% 的缝隙露出背景 */
+            /* 左右留出缝隙，露出背景点点 */
             width: 94%; 
-            
-            /* 2. 上下左右留一点距离，而不是顶满屏幕 */
-            margin: 12px auto; 
-            
-            /* 3. 手机屏幕小，圆角稍微改小一点点，看起来更协调，也不容易切掉字 */
+            margin: 10px auto; 
             border-radius: 16px;
-            
-            /* 4. 保证高度合适，底部留点空隙，看起来悬浮感更好 */
-            min-height: calc(100vh - 24px); 
+            min-height: calc(100vh - 20px);
         }
 
-        /* 5. 稍微调整一下字体，手机上看着更舒服 */
+        /* --- 关键修复：统一内部边距，解决对不齐的问题 --- */
+        
+        /* 1. 让标题、数据栏、帖子内容的左右边距保持一致 */
+        .thread-title, .meta, .toolbar, .post {
+            /* 原来是18px，手机上改小一点，省空间，且必须统一 */
+            padding-left: 14px !important; 
+            padding-right: 14px !important;
+        }
+        
+        /* 2. 专门修复顶部栏，防止标题太长顶到边缘 */
+        .topbar {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        
+        /* 3. 调整返回按钮的位置，让它不要看起来歪歪扭扭 */
+        .back-home {
+            left: 10px; /* 稍微靠左一点 */
+            top: 15px;
+        }
+
+        /* 4. 绝对不要给 content 单独加左右 padding，否则就会缩进对不齐！ */
         .content {
-            font-size: 15px;
-            padding-left: 5px;  /* 微调内边距 */
-            padding-right: 5px;
+            font-size: 15px; /* 字体大小合适即可 */
+            /* 这里不需要 padding-left/right */
         }
     }
+
 
 </style>
 
