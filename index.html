@@ -287,6 +287,12 @@
 
 
 <script>
+
+    // 辅助函数：生成 min 到 max 之间的随机整数
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 // 1. 获取 URL 参数中的 id
 const params = new URLSearchParams(window.location.search);
 // 默认加载 dog_issue，如果 URL 里没写 id
@@ -363,6 +369,21 @@ function renderPosts(){
     // 循环渲染每一条帖子
     pageData.forEach((p, index) => {
         const floor = globalOffset + index + 1;
+
+        // 如果开启了“只看楼主”，且当前发言人不是楼主，则跳过
+        if(onlyOP && p.name !== OP_NAME) return;
+
+        // ==========================================
+        // ★★★ 新增：给匿名用户随机积分 ★★★
+        // ==========================================
+    
+            // 如果数据里没写积分 (undefined)，或者积分是 0
+            if (!p.points) {
+                // 随机生成 5 到 300 之间的积分
+                // 这样匿名用户看起来就像普通的潜水党
+                p.points = getRandomInt(5, 10000); 
+            }
+        
         
         // 如果开启了“只看楼主”，且当前发言人不是楼主，则跳过
         if(onlyOP && p.name !== OP_NAME) return;
