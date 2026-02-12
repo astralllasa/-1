@@ -4,25 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🍊砂糖橘万事屋🍊论坛 - 帖子详情</title>
-
+<!-- 1. 先引入配置文件 -->
 <script src="config.js"></script> 
 <style>
-    /* 全局
+    /* === 全局：保留暖色调，背景加一点点圆点纹理 === */
     body { 
         margin: 0; 
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif; 
         background-color: #fdf6ec;
-        /背景
+        /* 背景改成圆点阵列，比方格更圆润 */
         background-image: radial-gradient(#e6d6bf 2px, transparent 2px);
         background-size: 20px 20px;
     }
 
-    /* 主容器
+    /* === 主容器：超大圆角 === */
     .phone { 
         max-width: 420px; 
         margin: 20px auto; 
         background: #fefaf6; 
-        /* 外框 */
+        /* 像一块圆润的香皂 */
         border-radius: 24px; 
         box-shadow: 
             0 0 0 2px #e6d6bf, /* 外圈细线 */
@@ -31,7 +31,7 @@
         min-height: 90vh; 
     }
 
-    /* 顶部栏
+    /* === 顶部栏：圆润的头部 === */
     .topbar { 
         background: #c58f5c; 
         color: white; 
@@ -44,7 +44,7 @@
         
     }
     
-    /* 返回按钮
+    /* 返回按钮：胶囊形状 */
     .back-home { 
         position: absolute; 
         left: 15px; 
@@ -59,7 +59,7 @@
     }
     .back-home:hover { background: #fff; color: #c58f5c; }
 
-    /* 标题区
+    /* === 标题区：虚线分割 === */
     .thread-title { 
         padding: 18px; 
         font-size: 16px; 
@@ -67,10 +67,11 @@
         background: #fff; 
         color: #5a4a3a; 
         line-height: 1.5;
+        /* 底部用虚线，像撕下来的票据 */
         border-bottom: 2px dashed #e6d6bf;
     }
 
-    /* 数据栏 */
+    /* === 数据栏 === */
     .meta { 
         padding: 10px 18px; 
         font-size: 11px; 
@@ -79,7 +80,7 @@
         background: #fffcf8;
     }
 
-    /* 工具栏：气泡按钮 */
+    /* === 工具栏：气泡按钮 === */
     .toolbar { 
         padding: 12px; 
         background: #fffcf8; 
@@ -104,36 +105,36 @@
         box-shadow: 0 4px 10px rgba(197, 143, 92, 0.3); /* 柔和发光 */
     }
 
-        /* 跑马灯容器 */
+        /* === 跑马灯容器 === */
     .marquee-wrapper {
-        background: #fff8e1; 
-        color: #a05d2c;     
-        font-family: "Courier New", monospace;
+        background: #fff8e1; /* 暖黄便签纸色，配合你的主题 */
+        color: #a05d2c;      /* 焦糖色文字 */
+        font-family: "Courier New", monospace; /* 复古打印机字体 */
         font-size: 12px;
         padding: 6px 0;
-        border-bottom: 2px dashed #e6d6bf;
-        overflow: hidden;    
-        white-space: nowrap; 
+        border-bottom: 2px dashed #e6d6bf; /* 虚线分割 */
+        overflow: hidden;    /* 必须：隐藏超出部分 */
+        white-space: nowrap; /* 必须：强制不换行 */
     }
 
-    /* 跑马灯内容动画 */
+    /* === 跑马灯内容动画 === */
     .marquee-content {
         display: inline-block;
         padding-left: 100%;  /* 从最右边开始 */
         animation: marquee 15s linear infinite; /* 15秒循环一次 */
     }
 
-    /* 动画关键帧 */
+    /* === 动画关键帧 (必须加这个，不然不动) === */
     @keyframes marquee {
         0% { transform: translateX(0); }
         100% { transform: translateX(-100%); }
     }
 
 
-    /* 帖子内容 */
+    /* === 帖子内容 === */
     .post { 
         padding: 20px 18px; 
-        border-bottom: 1px dashed #e0d0c0; 
+        border-bottom: 1px dashed #e0d0c0; /* 柔和虚线 */
     }
     
     .username { 
@@ -142,9 +143,9 @@
         margin-bottom: 6px; 
         color: #4a3c2e; 
     }
-    /* 楼主标签 */
+    /* 楼主标签：圆角 */
     .username span { 
-        background: #ffebd7; 
+        background: #ffebd7; /* 浅橘粉色 */
         color: #c3806b !important; 
         padding: 2px 8px; 
         font-size: 11px !important; 
@@ -155,7 +156,7 @@
     .meta-user { font-size: 11px; color: #bcaaa4; margin-bottom: 8px; }
     .floor { font-size: 12px; color: #c58f5c; margin-bottom: 4px; }
 
-    /* 正文 */
+    /* 正文：保持你的易读性 */
     .content { 
         font-size: 15px; 
         line-height: 1.7; 
@@ -164,12 +165,12 @@
         word-wrap: break-word; 
     }
 
-    /* 引用块 */
+    /* === 引用块：圆角卡片 === */
     .bbs-quote { 
-        background: #fff8e1; 
+        background: #fff8e1; /* 暖黄便签纸 */
         border: none;
-        border-left: 4px solid #cfa291; 
-        border-radius: 5px; 
+        border-left: 4px solid #cfa291; /* 左侧圆头线条 */
+        border-radius: 5px; /* 圆润 */
         padding: 12px; 
         margin: 12px 0; 
         font-size: 12px; 
@@ -182,7 +183,7 @@
         font-weight: bold; 
     }
 
-    /*翻页条*/
+    /* === 翻页条：圆点按钮 === */
     .pagebar { 
         padding: 20px; 
         text-align: center; 
@@ -196,7 +197,7 @@
         line-height: 28px;
         margin: 0 4px; 
         cursor: pointer; 
-        border-radius: 50%;
+        border-radius: 50%; /* 完全圆形 */
         background: #fff;
         color: #8c7c6d;
         font-size: 12px;
@@ -207,7 +208,7 @@
         background: #c58f5c; 
         color: #fff; 
         border-color: #c58f5c;
-        transform: scale(1.1);
+        transform: scale(1.1); /* 稍微变大 */
         box-shadow: 0 4px 8px rgba(197, 143, 92, 0.3);
     }
 </style>
@@ -218,17 +219,18 @@
 
 <div class="phone">
     <div class="topbar">
+        <!-- 这里加一个返回列表的逻辑，稍后可以用 list.html 替代 -->
         <span class="back-home" onclick="window.location.href='list.html'">← 帖子列表</span>
         🍊砂糖橘万事屋🍊
     </div>
 
      <div class="marquee-wrapper">
         <div class="marquee-content">
-            *** 欢迎来到砂糖橘万事屋 *** 文明上网，理性发帖 *** 这里的早餐很好吃 *** 
+            *** 欢迎来到砂糖橘万事屋 *** 文明上网，理性发帖 *** 这里的早餐很好吃 *** (｡♥‿♥｡)
         </div>
     </div>
 
-
+    <!-- 标题不再硬编码，而是留空等待 JS 填充 -->
     <div class="thread-title" id="uiTitle">加载中...</div>
 
     <div class="meta">浏览量：1843 ｜ 收藏：62</div>
@@ -349,25 +351,26 @@ function renderPosts(){
             ${quoteHTML}
             <div class="content">${p.content.replace(/\n/g,"<br>")}</div>
         `;
-
+        
+        // --- ↑↑↑ 补回的代码结束 ↑↑↑ ---
 
         // 将帖子加入容器
         container.appendChild(postDiv);
     });
 
     // ==========================================
-    //             锁帖提示逻辑 
+    // ★★★ 锁帖提示逻辑 (自动判断最后一页) ★★★
     // ==========================================
     if (threadInfo.isLocked && currentPage === threadInfo.totalPages && !onlyOP) {
         const lockDiv = document.createElement('div');
         Object.assign(lockDiv.style, {
-            backgroundColor: '#fff5f5', 
-            border: '2px solid #ffcdd2', 
-            color: '#e57373', 
+            backgroundColor: '#fff5f5', // 很浅的粉色
+            border: '2px solid #ffcdd2', // 柔和的粉红边框
+            color: '#e57373', // 柔和的红色文字
             padding: '12px 20px',
             margin: '30px auto',
             textAlign: 'center',
-            borderRadius: '25px', 
+            borderRadius: '25px', // ★★★ 重点：胶囊形状 ★★★
             fontSize: '13px',
             fontWeight: 'bold',
             display: 'flex',
@@ -376,7 +379,7 @@ function renderPosts(){
             gap: '8px',
             width: '80%',
             maxWidth: '600px',
-            boxShadow: '0 4px 10px rgba(255, 205, 210, 0.5)' 
+            boxShadow: '0 4px 10px rgba(255, 205, 210, 0.5)' // 柔和的粉色光晕
         });
         
         lockDiv.innerHTML = `
