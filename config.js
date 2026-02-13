@@ -44,7 +44,8 @@ window.forumConfig = {
         title: "有没有啥早餐推荐",
         opName: "Andy12hsu",
         replyCount: 10,
-        isFake: true 
+        totalPages: 1,
+        replyCount: 13,
     },
 
      "fake2": {
