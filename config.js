@@ -45,15 +45,15 @@ window.forumConfig = {
         opName: "Andy12hsu",
         replyCount: 10,
         totalPages: 1,
-        replyCount: 13,
     },
 
      "fake2": {
         title: "我家鹦鹉学会骂人了",
         opName: "Sakkkk",
-        replyCount: 2,
-        isFake: true 
+        replyCount: 9,
+        totalPages: 1,
     },
+    
     "fake4": {
         title: " 救命我感觉我兄弟对我有意思",
         opName: "十万火急",
