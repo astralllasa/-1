@@ -12,7 +12,7 @@ render([
      现在她走了，鹦鹉不仅骂人还会叫善炭牛福。。。
      救救我，怎么办啊，我不会教啊！`},
 { name:"Sakkkk", time:"2026-01-15 14:20", points:"2100", content:`救命啊？！有人吗？`},
-{ name:"Sakkkk", time:"2026-01-15 14:20", points:"2100", content:`救命 顶顶`},
+{ name:"Sakkkk", time:"2026-01-15 15:20", points:"2100", content:`救命 顶顶`},
 { name:"Sakkkk", time:"2026-01-15 16:20", points:"2100", content:`顶顶`},
 
 ], 1); // 这里的 1 代表这是第一页的数据
