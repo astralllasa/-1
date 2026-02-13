@@ -35,7 +35,7 @@ window.forumConfig = {
     "fake1": {
         title: "有没有啥早餐推荐",
         opName: "Andy12hsu",
-        replyCount: 10,
+        replyCount: 13,
         totalPages: 1,
     },
 
