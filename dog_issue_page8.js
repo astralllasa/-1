@@ -91,7 +91,7 @@ A栋11楼和C栋12楼……
 { name:"番茄炒鸡蛋", time:"2026-02-14 18:09", content:`不要啊饭团男`},
 {   name: "头痛之",
         time: "2026-02-14 18:09",
-        content: "这是不是金毛哥的帖子？<a href='index.html?id=man_issue' style='color:#c58f5c;text-decoration:underline;'>怎么才能在有好感的人面前停止发疯</a>。",
+        content: "这是不是金毛哥的帖子？<a href='index.html?id=man_issue' style='color:#c58f5c;text-decoration:underline;'>怎么才能在有好感的人面前停止发疯</a>",
         points: 500
     },
 { name:"多余的感情", time:"2026-02-14 18:26", content:`楼主！饭团男！你快回来看看啊！！！！`},
