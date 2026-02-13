@@ -25,14 +25,6 @@ window.forumConfig = {
         isLocked: true
     },
 
-    // === 这是一个假帖子 ===
-    "ad_post": {
-        title: "我妈总在群里发我小时候的尴尬照，我快被气疯了",
-        opName: "汤姆狸",
-        replyCount: 20,
-        isFake: true  // <--- 加上这一行，表示它是假的
-    },
-
        "fake3": {
         title: " 太好了我磕的cp是真的…",
         opName: "鱼丸火锅",
@@ -59,6 +51,14 @@ window.forumConfig = {
         opName: "十万火急",
         totalPages: 1,
         isFake: true 
+    },
+
+        // === 这是一个假帖子 ===
+    "ad_post": {
+        title: "我妈总在群里发我小时候的尴尬照，我快被气疯了",
+        opName: "汤姆狸",
+        replyCount: 20,
+        isFake: true  // <--- 加上这一行，表示它是假的
     },
 
 };
